@@ -1,0 +1,16 @@
+[
+{
+  "modid": "physicsmod",
+  "name": "PhysicsMod",
+  "description": "A minecraft mod that provides block and fluid physics in the game.",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "url": "",
+  "updateUrl": "",
+  "authorList": ["Coaster3000"],
+  "credits": "Pseudo Physics mod for inspiration. It was a physics mod for 1.5 beta of minecraft!",
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": []
+}
+]
