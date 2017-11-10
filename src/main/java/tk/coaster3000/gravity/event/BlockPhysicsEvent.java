@@ -13,14 +13,14 @@ public class BlockPhysicsEvent extends BlockEvent {
 	/**
 	 * Fired when physics checks are going to be done.
 	 */
-	public static class BlockPhysicsCheckEvent extends BlockPhysicsEvent {
+	public static class Check extends BlockPhysicsEvent {
 		enum Result {
 			DEFAULT,STATIC,FALL
 		}
 
 		public Result result = Result.DEFAULT;
 
-		public BlockPhysicsCheckEvent(World world, BlockPos pos, IBlockState state) {
+		public Check(World world, BlockPos pos, IBlockState state) {
 			super(world, pos, state);
 		}
 
@@ -33,8 +33,8 @@ public class BlockPhysicsEvent extends BlockEvent {
 	/**
 	 * Fired when physics is applied to a block and it begins to fall.
 	 */
-	public static class BlockFallEvent extends BlockPhysicsEvent {
-		BlockFallEvent(World world, BlockPos pos, IBlockState state) {
+	public static class Fall extends BlockPhysicsEvent {
+		Fall(World world, BlockPos pos, IBlockState state) {
 			super(world, pos, state);
 		}
 	}
