@@ -8,8 +8,8 @@
   "url": "",
   "updateUrl": "",
   "authorList": ["Coaster3000"],
-  "credits": "Pseudo Physics mod for inspiration. It was a physics mod for 1.5 beta of minecraft!",
-  "logoFile": "",
+  "credits": "Authored by Coaster3000 based on the original mod Pseudo Physics for 1.5 beta of minecraft!",
+  "logoFile": "/mod_Gravity_logo.png",
   "screenshots": [],
   "dependencies": []
 }
