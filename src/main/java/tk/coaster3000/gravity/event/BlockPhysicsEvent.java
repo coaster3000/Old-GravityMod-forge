@@ -11,15 +11,9 @@ public class BlockPhysicsEvent extends BlockEvent {
 	}
 
 	/**
-	 * Fired when physics checks are going to be done.
+	 * Fired before and after physics checks are completed.
 	 */
 	public static class Check extends BlockPhysicsEvent {
-		enum Result {
-			DEFAULT,STATIC,FALL
-		}
-
-		public Result result = Result.DEFAULT;
-
 		public Check(World world, BlockPos pos, IBlockState state) {
 			super(world, pos, state);
 		}
@@ -34,8 +28,13 @@ public class BlockPhysicsEvent extends BlockEvent {
 	 * Fired when physics is applied to a block and it begins to fall.
 	 */
 	public static class Fall extends BlockPhysicsEvent {
-		Fall(World world, BlockPos pos, IBlockState state) {
+		public Fall(World world, BlockPos pos, IBlockState state) {
 			super(world, pos, state);
+		}
+
+		@Override
+		public boolean isCancelable() {
+			return true;
 		}
 	}
 }
