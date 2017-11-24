@@ -2,23 +2,27 @@ package tk.coaster3000.gravity;
 
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import tk.coaster3000.gravity.event.BlockPhysicsEvent;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 public class PhysicsScheduler {
 
 	private List<String> worldIDList;
-	private List<List<PhysicsTask>> taskList;
+	private List<Queue<PhysicsCalculationTask>> calcTaskList;
+	private List<Queue<PhysicsFellTask>> fellTaskList;
+
+
+	private static final int CALC_INDEX = 0, FALL_INDEX = 1;
 
 	//TODO: Implement configuration settings
-	private int physicsLimit = 100; // Max physics tasks per handleTick call
+	private int calculationLimit = 100; // Max physics tasks that involve calculations.
+	private int fellLimit = 50; // Max physics tasks that involve blocks falling.
 
 	public PhysicsScheduler() {
 		worldIDList = new ArrayList<>();
-		taskList = new ArrayList<>();
+
+		calcTaskList = new ArrayList<>();
+		fellTaskList = new ArrayList<>();
 	}
 
 	/**
@@ -30,7 +34,8 @@ public class PhysicsScheduler {
 		if (worldIDList.contains(id = getWorldKey(world))) return;
 
 		worldIDList.add(id);
-		taskList.add(new ArrayList<>());
+		calcTaskList.add(new PriorityQueue<>());
+		fellTaskList.add(new PriorityQueue<>());
 	}
 
 	/**
@@ -43,7 +48,8 @@ public class PhysicsScheduler {
 		if (worldIDList.contains(id = getWorldKey(world))) {
 			//TODO: Implement physics check serialization to store uncalculated physics.
 			int index = worldIDList.indexOf(id);
-			taskList.remove(index);
+			calcTaskList.remove(index);
+			fellTaskList.remove(index);
 			worldIDList.remove(index);
 		}
 	}
@@ -68,9 +74,10 @@ public class PhysicsScheduler {
 	}
 
 	/**
-	 * Tells if the world has work to be processed
+	 * Tells if the world has work to be processed.
+	 * <p>if the world does not exist in the scheduler, will always return false.</p>
 	 * @param world to check
-	 * @return true if work present, otherwise false
+	 * @return true if work present on world, otherwise false
 	 */
 	boolean hasWork(World world) {
 		return hasWork(getWorldKey(world));
@@ -83,7 +90,8 @@ public class PhysicsScheduler {
 	 * @return true if work present, otherwise false
 	 */
 	private boolean hasWork(String worldKey) {
-		return hasWorld(worldKey) && !taskList.get(worldIDList.indexOf(worldKey)).isEmpty();
+		int i = worldIDList.indexOf(worldKey); // index of world
+		return hasWorld(worldKey) && (!calcTaskList.get(i).isEmpty() || !fellTaskList.get(i).isEmpty());
 	}
 
 	/**
@@ -91,56 +99,71 @@ public class PhysicsScheduler {
 	 * @param world to handle physics
 	 */
 	void handleTick(World world) {
-		physicsLimit = 100;
 		String id;
-		List<PhysicsTask> tasks;
-		if (worldIDList.contains(id = getWorldKey(world)) && !(tasks = taskList.get(worldIDList.indexOf(id))).isEmpty()) {
-			int i = 0;
-			while (physicsLimit > i++ && !tasks.isEmpty()) {
-				PhysicsTask task = tasks.remove(0);
-				task.execute();
+		if (hasWork(id = getWorldKey(world))) {
+			List<PhysicsTask> tasks = new ArrayList<>();
+
+			Queue<PhysicsCalculationTask> calcTasks = calcTaskList.get(worldIDList.indexOf(id));
+			Queue<PhysicsFellTask> fellTasks = fellTaskList.get(worldIDList.indexOf(id));
+
+			int ft = 0, ct = 0; // Fell Tasks, Calculation Tasks
+			boolean mft = fellTasks.isEmpty(), mct = calcTasks.isEmpty(); // Max Fell Tasks Met, Max Calculation Tasks Met
+
+			while (!mft || !mct) {
+				if (calculationLimit < ct++ || calcTasks.isEmpty()) mct = true;
+				if (fellLimit < ft++ || fellTasks.isEmpty()) mft = true;
+
+				if (!mft) tasks.add(fellTasks.remove());
+				if (!mct) tasks.add(calcTasks.remove());
 			}
+
+			tasks.forEach(PhysicsTask::execute);
 		}
+
+//		if (worldIDList.contains(id = getWorldKey(world)) && !(tasks = calcTaskList.get(worldIDList.indexOf(id))).isEmpty()) {
+//			int i = 0;
+//			while (calculationLimit > i++ && !tasks.isEmpty()) {
+//				PhysicsTask task = tasks.remove(0);
+//				task.execute();
+//			}
+//		}
 	}
+
 
 	/**
-	 * Retrieves a read-only view of the task list.
-	 * @param world to grab list from
-	 * @return unmodifiable view of the PhysicsTask List
+	 * @throws IllegalArgumentException when task is neither a PhysicsCalculationTask or PhysicsFellTask
+	 * @param task to schedule
 	 */
-	List<PhysicsTask> getTasks(World world) {
-		return getTasks(getWorldKey(world));
+	void scheduleTask(PhysicsTask task) {
+		String id;
+		if (hasWorld(id = getWorldKey(task.world)))
+			if (task instanceof PhysicsCalculationTask)
+				calcTaskList.get(worldIDList.indexOf(id)).add((PhysicsCalculationTask) task);
+			else if (task instanceof PhysicsFellTask)
+				fellTaskList.get(worldIDList.indexOf(id)).add((PhysicsFellTask) task);
+			else
+				throw new IllegalArgumentException("Invalid task supplied to PhysicsScheduler!");
 	}
 
-	/**
-	 * Retrieves a read-only view of the task list.
-	 * @param id to grab list from
-	 * @return unmodifiable view of the PhysicsTask List
-	 */
-	List<PhysicsTask> getTasks(String id) {
-		if (!hasWorld(id)) return null;
-		return Collections.unmodifiableList(taskList.get(worldIDList.indexOf(id)));
-	}
-
-	public void scheduleTask(World world, BlockPos position) {
-		if (hasWorld(world))
-			taskList.get(worldIDList.indexOf(getWorldKey(world))).add(new PhysicsTask(world, position));
+	@Deprecated
+	public void scheduleCalcTask(World world, BlockPos position) {
+		scheduleTask(new PhysicsCalculationTask(this, world, position));
 	}
 
 	/**
 	 * Retrieves the maximum allowed tasks per tick.
 	 * @return
 	 */
-	public int getPhysicsLimit() {
-		return physicsLimit;
+	public int getCalculationLimit() {
+		return calculationLimit;
 	}
 
 	/**
 	 * Sets the maximum allowed tasks per tick.
-	 * @param physicsLimit to set
+	 * @param calculationLimit to set
 	 */
-	public void setPhysicsLimit(int physicsLimit) {
-		this.physicsLimit = physicsLimit;
+	public void setCalculationLimit(int calculationLimit) {
+		this.calculationLimit = calculationLimit;
 	}
 
 	private static String getWorldKey(World world) {

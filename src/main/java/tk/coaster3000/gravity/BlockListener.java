@@ -9,8 +9,6 @@ import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
-import static tk.coaster3000.gravity.util.PhysicsUtil.*;
-
 public class BlockListener {
 
 	public BlockListener(PhysicsScheduler scheduler) {
@@ -32,10 +30,8 @@ public class BlockListener {
 		World world = event.getWorld();
 		if (world.isRemote) return; //Ignore the event
 		BlockPos pos = event.getPos();
-//		IBlockState state = event.getState();
 
-		scheduler.scheduleTask(world, pos);
-//		if (canFall(world, pos, state)) fellBlock(world, pos, state);
+		scheduler.scheduleCalcTask(world, pos);
 	}
 
 	@SubscribeEvent(priority = EventPriority.LOWEST, receiveCanceled = false)
@@ -46,8 +42,7 @@ public class BlockListener {
 		BlockPos sPos = event.getPos(); // FIXME: Blocks near final layer of world will cause world to PLUMMET INTO DARKNESS
 		for (EnumFacing face : event.getNotifiedSides()) { // Test horizontal
 			BlockPos pos = sPos.offset(face);
-			scheduler.scheduleTask(world, pos);
-//			if (canFall(world, pos)) fellBlock(world, pos);
+			scheduler.scheduleCalcTask(world, pos);
 
 		}
 
