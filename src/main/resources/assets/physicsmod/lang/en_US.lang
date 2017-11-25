@@ -1,0 +1,5 @@
+commands.gravity.usage=gravity [set|get|save|load]
+commands.gravity.save.usage=gravity save
+commands.gravity.load.usage=gravity load
+commands.gravity.get.usage=gravity get [config]
+commands.gravity.set.usage=gravity set [config] [value]
