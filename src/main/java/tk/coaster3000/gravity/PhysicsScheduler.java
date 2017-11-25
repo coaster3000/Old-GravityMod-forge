@@ -2,6 +2,7 @@ package tk.coaster3000.gravity;
 
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import tk.coaster3000.gravity.common.Config;
 
 import java.util.*;
 
@@ -15,8 +16,6 @@ public class PhysicsScheduler {
 	private static final int CALC_INDEX = 0, FALL_INDEX = 1;
 
 	//TODO: Implement configuration settings
-	private int calculationLimit = 100; // Max physics tasks that involve calculations.
-	private int fellLimit = 50; // Max physics tasks that involve blocks falling.
 
 	public PhysicsScheduler() {
 		worldIDList = new ArrayList<>();
@@ -110,8 +109,8 @@ public class PhysicsScheduler {
 			boolean mft = fellTasks.isEmpty(), mct = calcTasks.isEmpty(); // Max Fell Tasks Met, Max Calculation Tasks Met
 
 			while (!mft || !mct) {
-				if (calculationLimit < ct++ || calcTasks.isEmpty()) mct = true;
-				if (fellLimit < ft++ || fellTasks.isEmpty()) mft = true;
+				if (Config.maxPhysicsCalculationTasks < ct++ || calcTasks.isEmpty()) mct = true;
+				if (Config.maxPhysicsFellTasks < ft++ || fellTasks.isEmpty()) mft = true;
 
 				if (!mft) tasks.add(fellTasks.remove());
 				if (!mct) tasks.add(calcTasks.remove());
@@ -148,22 +147,6 @@ public class PhysicsScheduler {
 	@Deprecated
 	public void scheduleCalcTask(World world, BlockPos position) {
 		scheduleTask(new PhysicsCalculationTask(this, world, position));
-	}
-
-	/**
-	 * Retrieves the maximum allowed tasks per tick.
-	 * @return
-	 */
-	public int getCalculationLimit() {
-		return calculationLimit;
-	}
-
-	/**
-	 * Sets the maximum allowed tasks per tick.
-	 * @param calculationLimit to set
-	 */
-	public void setCalculationLimit(int calculationLimit) {
-		this.calculationLimit = calculationLimit;
 	}
 
 	private static String getWorldKey(World world) {

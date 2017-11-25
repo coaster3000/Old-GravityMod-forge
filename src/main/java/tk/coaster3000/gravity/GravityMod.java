@@ -4,7 +4,11 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLServerStartedEvent;
+import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import org.apache.logging.log4j.Logger;
+import tk.coaster3000.gravity.command.GravityConfigCommand;
+import tk.coaster3000.gravity.common.Config;
 import tk.coaster3000.gravity.util.PhysicsUtil;
 
 import static net.minecraftforge.common.MinecraftForge.EVENT_BUS;
@@ -17,7 +21,8 @@ public class GravityMod {
 
 	static final String MODVERSION = "@mod_version@";
 
-	private static GravityMod instance = null;
+	@Mod.Instance(MODID)
+	public static GravityMod instance;
 
 	private Logger logger;
 
@@ -34,8 +39,10 @@ public class GravityMod {
 
 	@Mod.EventHandler
 	public void onPreInit(FMLPreInitializationEvent event) {
-		setInstance(this);
 		this.logger = event.getModLog();
+
+		Config.load(event);
+
 		logger.info("Pre-Initialization Completed.");
 	}
 
@@ -57,11 +64,8 @@ public class GravityMod {
 		logger.info("Initialization Completed.");
 	}
 
-	public static GravityMod getInstance() {
-		return GravityMod.instance;
-	}
-
-	private static void setInstance(GravityMod instance) {
-		GravityMod.instance = instance;
+	@Mod.EventHandler
+	public void onServerStart(FMLServerStartingEvent event) {
+		event.registerServerCommand(GravityConfigCommand.instance);
 	}
 }
