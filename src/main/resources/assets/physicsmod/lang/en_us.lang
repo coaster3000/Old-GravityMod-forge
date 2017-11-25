@@ -1,9 +1,19 @@
-commands.gravity.usage=gravity [set|get|save|load]
-commands.gravity.save.usage=gravity save
+commands.gravity.usage=/gravity [set|get|save|load]
+commands.gravity.save.usage=/gravity save
 commands.gravity.save.complete=Config file for Gravity successfully saved!
 commands.gravity.save.error=An error has occurred while saving Gravity's config: %1$s
-commands.gravity.load.usage=gravity load
+commands.gravity.load.usage=/gravity load
 commands.gravity.load.complete=Config file for Gravity successfully saved!
 commands.gravity.load.error=An error has occurred while loading Gravity's config: %1$s
-commands.gravity.get.usage=gravity get [config]
-commands.gravity.set.usage=gravity set [config] [value]
+commands.gravity.get.result="%1$s" is set to "%2$s"
+commands.gravity.get.usage=/gravity get [config]
+commands.gravity.get.invalid=%1$s is not a valid key!
+commands.gravity.get.list=The following settings may be retrieved: %1$s
+commands.gravity.set.usage=/gravity set [config] [value]
+commands.gravity.set.list=The following settings may be set: %1$s
+commands.gravity.set.result="%1$s" has been set to "%2$s"
+commands.gravity.set.invalid=%1$s is not a valid key!
+commands.gravity.get.invalidcast=An error has occurred during casting for config key %1$s: %2$s is not a valid type to cast to.
+
+
+
