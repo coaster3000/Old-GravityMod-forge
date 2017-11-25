@@ -1,5 +1,9 @@
 commands.gravity.usage=gravity [set|get|save|load]
 commands.gravity.save.usage=gravity save
+commands.gravity.save.complete=Config file for Gravity successfully saved!
+commands.gravity.save.error=An error has occurred while saving Gravity's config: %1$s
 commands.gravity.load.usage=gravity load
+commands.gravity.load.complete=Config file for Gravity successfully saved!
+commands.gravity.load.error=An error has occurred while loading Gravity's config: %1$s
 commands.gravity.get.usage=gravity get [config]
 commands.gravity.set.usage=gravity set [config] [value]
