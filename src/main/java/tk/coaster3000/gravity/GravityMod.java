@@ -1,15 +1,13 @@
 package tk.coaster3000.gravity;
 
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLServerStartedEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import org.apache.logging.log4j.Logger;
 import tk.coaster3000.gravity.command.GravityConfigCommand;
 import tk.coaster3000.gravity.common.Config;
-import tk.coaster3000.gravity.util.PhysicsUtil;
+import tk.coaster3000.gravity.scheduler.PhysicsScheduler;
 
 import static net.minecraftforge.common.MinecraftForge.EVENT_BUS;
 import static tk.coaster3000.gravity.GravityMod.*;

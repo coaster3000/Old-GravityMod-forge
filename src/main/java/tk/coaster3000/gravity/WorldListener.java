@@ -2,6 +2,7 @@ package tk.coaster3000.gravity;
 
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import tk.coaster3000.gravity.scheduler.PhysicsScheduler;
 
 public class WorldListener {
 

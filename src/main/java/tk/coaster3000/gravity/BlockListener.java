@@ -8,6 +8,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import tk.coaster3000.gravity.scheduler.PhysicsScheduler;
 
 public class BlockListener {
 

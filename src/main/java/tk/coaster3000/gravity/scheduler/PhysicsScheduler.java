@@ -1,4 +1,4 @@
-package tk.coaster3000.gravity;
+package tk.coaster3000.gravity.scheduler;
 
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -28,7 +28,7 @@ public class PhysicsScheduler {
 	 * Used to add a world to the tick handler.
 	 * @param world to add
 	 */
-	void addWorld(World world) {
+	public void addWorld(World world) {
 		String id;
 		if (worldIDList.contains(id = getWorldKey(world))) return;
 
@@ -42,7 +42,7 @@ public class PhysicsScheduler {
 	 * Normally is called when a world is unloaded.
 	 * @param world to remove
 	 */
-	void removeWorld(World world) {
+	public void removeWorld(World world) {
 		String id;
 		if (worldIDList.contains(id = getWorldKey(world))) {
 			//TODO: Implement physics check serialization to store uncalculated physics.
@@ -78,7 +78,7 @@ public class PhysicsScheduler {
 	 * @param world to check
 	 * @return true if work present on world, otherwise false
 	 */
-	boolean hasWork(World world) {
+	public boolean hasWork(World world) {
 		return hasWork(getWorldKey(world));
 	}
 
@@ -97,7 +97,7 @@ public class PhysicsScheduler {
 	 * Called for a world tick to handle physics tasks for specified world.
 	 * @param world to handle physics
 	 */
-	void handleTick(World world) {
+	public void handleTick(World world) {
 		String id;
 		if (hasWork(id = getWorldKey(world))) {
 			List<PhysicsTask> tasks = new ArrayList<>();

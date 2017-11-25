@@ -1,4 +1,4 @@
-package tk.coaster3000.gravity;
+package tk.coaster3000.gravity.scheduler;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.math.BlockPos;

@@ -7,6 +7,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import tk.coaster3000.gravity.event.PhysicsTickEvent;
 import tk.coaster3000.gravity.event.PhysicsTickEvent.Phase;
+import tk.coaster3000.gravity.scheduler.PhysicsScheduler;
 
 public class PhysicsHandler {
 
