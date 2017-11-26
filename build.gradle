@@ -107,6 +107,10 @@ test {
 	testLogging.showStandardStreams = true
 }
 
+task wrapper(type: Wrapper) {
+	gradleVersion = '4.3.1'
+}
+
 // add deobfunscated jar
 //task deobfJar(type: Jar) {
 //  from sourceSets.main.output
