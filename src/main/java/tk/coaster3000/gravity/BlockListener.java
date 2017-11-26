@@ -1,3 +1,18 @@
+/**
+ * Copyright 2017 Coaster3000 (Christopher Krier)
+ *
+ *    Licensed under the Apache License, Version 2.0 (the "License");
+ *    you may not use this file except in compliance with the License.
+ *    You may obtain a copy of the License at
+ *
+ *        http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    Unless required by applicable law or agreed to in writing, software
+ *    distributed under the License is distributed on an "AS IS" BASIS,
+ *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    See the License for the specific language governing permissions and
+ *    limitations under the License.
+ */
 package tk.coaster3000.gravity;
 
 import net.minecraft.block.BlockFalling;
@@ -12,6 +27,10 @@ import tk.coaster3000.gravity.scheduler.PhysicsScheduler;
 
 public class BlockListener {
 
+	/**
+	 * This is.
+	 * @param scheduler scheduler instance
+	 */
 	public BlockListener(PhysicsScheduler scheduler) {
 		this.scheduler = scheduler;
 	}
@@ -26,6 +45,10 @@ public class BlockListener {
 		return !(blockState.getBlock().getRegistryName() != null && blockState.getBlock().getRegistryName().toString().equals("minecraft:bedrock")) && (world.isAirBlock(pos.down()) || BlockFalling.canFallThrough(world.getBlockState(pos.down())));
 	}
 
+	/**
+	 * asdf.
+	 * @param event s
+	 */
 	@SubscribeEvent(priority = EventPriority.LOWEST, receiveCanceled = false)
 	public void onBlockPlace(BlockEvent.PlaceEvent event) {
 		World world = event.getWorld();
@@ -35,6 +58,10 @@ public class BlockListener {
 		scheduler.scheduleCalcTask(world, pos);
 	}
 
+	/**
+	 * asdf.
+	 * @param event s
+	 */
 	@SubscribeEvent(priority = EventPriority.LOWEST, receiveCanceled = false)
 	public void onBlockNeighborChange(BlockEvent.NeighborNotifyEvent event) {
 		World world = event.getWorld();
@@ -48,5 +75,4 @@ public class BlockListener {
 		}
 
 	}
-
 }

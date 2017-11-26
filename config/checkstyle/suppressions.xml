@@ -1,0 +1,14 @@
+<!DOCTYPE suppressions PUBLIC
+		"-//Puppy Crawl//DTD Suppressions 1.1//EN"
+		"http://www.puppycrawl.com/dtds/suppressions_1_1.dtd">
+
+<suppressions>
+	<!-- >Test sources suppressions</!-->
+	<suppress files="[\\/]src[\\/]test[\\/].*" id="ConstantNameMain" />
+
+	<!-- >Main sources suppressions</!-->
+	<suppress files="[\\/]src[\\/]main[\\/].*" id="ConstantNameTest" />
+
+	<!-- >API sources suppressions</!-->
+	<suppress files="[\\/]src[\\/]api[\\/].*" id="ConstantNameTest" />
+</suppressions>

@@ -11,12 +11,18 @@ buildscript {
     repositories {
         jcenter()
         maven { url = "http://files.minecraftforge.net/maven" }
+	    maven { url "https://plugins.gradle.org/m2/" }
     }
     dependencies {
         classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
+	    classpath "gradle.plugin.nl.javadude.gradle.plugins:license-gradle-plugin:0.14.0"
     }
 }
+
 apply plugin: 'net.minecraftforge.gradle.forge'
+apply plugin: 'com.github.hierynomus.license'
+apply plugin: 'checkstyle'
+
 //Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
 
 
@@ -88,6 +94,17 @@ processResources {
     from(sourceSets.main.resources.srcDirs) {
         exclude '**/*.info'
     }
+}
+
+license {
+    header rootProject.file('config/HEADER')
+    strictCheck true
+}
+
+test {
+    useTestNG()
+
+	testLogging.showStandardStreams = true
 }
 
 // add deobfunscated jar

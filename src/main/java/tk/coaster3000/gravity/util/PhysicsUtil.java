@@ -1,3 +1,18 @@
+/**
+ * Copyright 2017 Coaster3000 (Christopher Krier)
+ *
+ *    Licensed under the Apache License, Version 2.0 (the "License");
+ *    you may not use this file except in compliance with the License.
+ *    You may obtain a copy of the License at
+ *
+ *        http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    Unless required by applicable law or agreed to in writing, software
+ *    distributed under the License is distributed on an "AS IS" BASIS,
+ *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    See the License for the specific language governing permissions and
+ *    limitations under the License.
+ */
 package tk.coaster3000.gravity.util;
 
 import net.minecraft.block.Block;
@@ -8,41 +23,35 @@ import net.minecraft.init.Blocks;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import java.util.Set;
 
 public class PhysicsUtil {
 
-
-	public static void init() {
-
-	}
-
 	private static boolean isStringEqual(ResourceLocation resource, String string) {
-		return string.equals((resource !=null? resource.toString():""));
+		return string.equals((resource != null ? resource.toString() : ""));
 	}
 
 	/**
-	 * Tells whether block is able to fall based on physics and whether it is allowed physics
+	 * Tells whether block is able to fall based on physics and whether it is allowed physics.
 	 * @see #canBlockFall(World, BlockPos, IBlockState)
 	 * @see #isBlockAllowedPhysics(IBlockState)
-	 * @param world
-	 * @param pos
+	 * @param world to check if the block can fall
+	 * @param position within the world to check if the block can fall
 	 * @return true if block can fall, false otherwise
 	 */
-	public static boolean canBlockFall(World world, BlockPos pos) {
-		return canBlockFall(world, pos, world.getBlockState(pos));
+	public static boolean canBlockFall(World world, BlockPos position) {
+		return canBlockFall(world, position, world.getBlockState(position));
 	}
 
 	/**
-	 * Tells whether block is able to fall based on physics and whether it is allowed physics
+	 * Tells whether block is able to fall based on physics and whether it is allowed physics.
 	 * @see #isBlockAllowedPhysics(IBlockState)
-	 * @param world
-	 * @param pos
-	 * @param blockState
+	 * @param world to check if the block can fall
+	 * @param position within the world to check if the block can fall
+	 * @param blockState block state to use when checking if the block can fall
 	 * @return true if block can fall, false otherwise
 	 */
-	public static boolean canBlockFall(World world, BlockPos pos, IBlockState blockState) {
-		return isBlockAllowedPhysics(blockState) && (world.isAirBlock(pos.down()) || BlockFalling.canFallThrough(world.getBlockState(pos.down())));
+	public static boolean canBlockFall(World world, BlockPos position, IBlockState blockState) {
+		return isBlockAllowedPhysics(blockState) && (world.isAirBlock(position.down()) || BlockFalling.canFallThrough(world.getBlockState(position.down())));
 	}
 
 	/**
@@ -55,22 +64,25 @@ public class PhysicsUtil {
 	}
 
 	/**
-	 * Turns a block in specified world at specified position to fall using the current block state at time of call
-	 * @param world
-	 * @param position
+	 * Turns a block in specified world at specified position to fall using the current block state at time of call.
+	 * @param world to have the block fall in
+	 * @param position within the world to have the block fall in
 	 */
 	public static void fellBlock(World world, BlockPos position) {
 		fellBlock(world, position, world.getBlockState(position));
 	}
 
 	/**
-	 * Turns a block in specified world at specified position to fall with the specified blockState
-	 * @param world
-	 * @param position
-	 * @param blockState
+	 * Turns a block in specified world at specified position to fall with the specified blockState.
+	 * @param world to have the block fall in
+	 * @param position within the world to have the block fall in
+	 * @param blockState block state to use when having the block fall within the world
 	 */
 	public static void fellBlock(World world, BlockPos position, IBlockState blockState) {
-		double x = position.getX() + 0.5, y = position.getY(), z = position.getZ() + 0.5;
+		double x = position.getX() + 0.5;
+		double y = position.getY();
+		double z = position.getZ() + 0.5;
+
 		EntityFallingBlock ent = new EntityFallingBlock(world, x, y, z, blockState);
 		ent.setOrigin(position.add(0.5,0,0.5));
 		ent.preventEntitySpawning = false;

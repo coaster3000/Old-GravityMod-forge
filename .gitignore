@@ -13,6 +13,12 @@
 !*.md
 !LICENSE
 
+# include Config
+!config/
+
+# include license header
+!config/HEADER
+
 # sourcecode
 !src/
 

@@ -1,24 +1,47 @@
+/**
+ * Copyright 2017 Coaster3000 (Christopher Krier)
+ *
+ *    Licensed under the Apache License, Version 2.0 (the "License");
+ *    you may not use this file except in compliance with the License.
+ *    You may obtain a copy of the License at
+ *
+ *        http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    Unless required by applicable law or agreed to in writing, software
+ *    distributed under the License is distributed on an "AS IS" BASIS,
+ *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    See the License for the specific language governing permissions and
+ *    limitations under the License.
+ */
 package tk.coaster3000.gravity.scheduler;
 
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import tk.coaster3000.gravity.common.Config;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.PriorityQueue;
+import java.util.Queue;
+
 
 public class PhysicsScheduler {
 
-	private List<String> worldIDList;
+	private List<String> worldIdList;
 	private List<Queue<PhysicsCalculationTask>> calcTaskList;
 	private List<Queue<PhysicsFellTask>> fellTaskList;
 
 
-	private static final int CALC_INDEX = 0, FALL_INDEX = 1;
+	private static final int CALC_INDEX = 0;
+	private static final int FALL_INDEX = 1;
 
 	//TODO: Implement configuration settings
 
+	/**
+	 * Constructs a new PhysicsScheduler object to handle physics tasks.
+	 */
 	public PhysicsScheduler() {
-		worldIDList = new ArrayList<>();
+		worldIdList = new ArrayList<>();
 
 		calcTaskList = new ArrayList<>();
 		fellTaskList = new ArrayList<>();
@@ -30,9 +53,9 @@ public class PhysicsScheduler {
 	 */
 	public void addWorld(World world) {
 		String id;
-		if (worldIDList.contains(id = getWorldKey(world))) return;
+		if (worldIdList.contains(id = getWorldKey(world))) return;
 
-		worldIDList.add(id);
+		worldIdList.add(id);
 		calcTaskList.add(new PriorityQueue<>());
 		fellTaskList.add(new PriorityQueue<>());
 	}
@@ -44,12 +67,12 @@ public class PhysicsScheduler {
 	 */
 	public void removeWorld(World world) {
 		String id;
-		if (worldIDList.contains(id = getWorldKey(world))) {
+		if (worldIdList.contains(id = getWorldKey(world))) {
 			//TODO: Implement physics check serialization to store uncalculated physics.
-			int index = worldIDList.indexOf(id);
+			int index = worldIdList.indexOf(id);
 			calcTaskList.remove(index);
 			fellTaskList.remove(index);
-			worldIDList.remove(index);
+			worldIdList.remove(index);
 		}
 	}
 
@@ -69,7 +92,7 @@ public class PhysicsScheduler {
 	 * @return true if world is processed in here, otherwise false
 	 */
 	private boolean hasWorld(String worldKey) {
-		return worldIDList.contains(worldKey);
+		return worldIdList.contains(worldKey);
 	}
 
 	/**
@@ -89,7 +112,7 @@ public class PhysicsScheduler {
 	 * @return true if work present, otherwise false
 	 */
 	private boolean hasWork(String worldKey) {
-		int i = worldIDList.indexOf(worldKey); // index of world
+		int i = worldIdList.indexOf(worldKey); // index of world
 		return hasWorld(worldKey) && (!calcTaskList.get(i).isEmpty() || !fellTaskList.get(i).isEmpty());
 	}
 
@@ -102,11 +125,13 @@ public class PhysicsScheduler {
 		if (hasWork(id = getWorldKey(world))) {
 			List<PhysicsTask> tasks = new ArrayList<>();
 
-			Queue<PhysicsCalculationTask> calcTasks = calcTaskList.get(worldIDList.indexOf(id));
-			Queue<PhysicsFellTask> fellTasks = fellTaskList.get(worldIDList.indexOf(id));
+			Queue<PhysicsCalculationTask> calcTasks = calcTaskList.get(worldIdList.indexOf(id));
+			Queue<PhysicsFellTask> fellTasks = fellTaskList.get(worldIdList.indexOf(id));
 
-			int ft = 0, ct = 0; // Fell Tasks, Calculation Tasks
-			boolean mft = fellTasks.isEmpty(), mct = calcTasks.isEmpty(); // Max Fell Tasks Met, Max Calculation Tasks Met
+			int ft = 0; // Fell Tasks
+			int ct = 0; // Calculation Tasks
+			boolean mft = fellTasks.isEmpty(); // Max Fell Tasks Met
+			boolean mct = calcTasks.isEmpty(); // Max Calculation Tasks Met
 
 			while (!mft || !mct) {
 				if (Config.maxPhysicsCalculationTasks < ct++ || calcTasks.isEmpty()) mct = true;
@@ -119,7 +144,7 @@ public class PhysicsScheduler {
 			tasks.forEach(PhysicsTask::execute);
 		}
 
-//		if (worldIDList.contains(id = getWorldKey(world)) && !(tasks = calcTaskList.get(worldIDList.indexOf(id))).isEmpty()) {
+//		if (worldIdList.contains(id = getWorldKey(world)) && !(tasks = calcTaskList.get(worldIdList.indexOf(id))).isEmpty()) {
 //			int i = 0;
 //			while (calculationLimit > i++ && !tasks.isEmpty()) {
 //				PhysicsTask task = tasks.remove(0);
@@ -130,20 +155,27 @@ public class PhysicsScheduler {
 
 
 	/**
-	 * @throws IllegalArgumentException when task is neither a PhysicsCalculationTask or PhysicsFellTask
+	 * Schedules a task into the scheduler to be performed during tick handling.
 	 * @param task to schedule
+	 * @throws IllegalArgumentException when task is neither a PhysicsCalculationTask or PhysicsFellTask
 	 */
 	void scheduleTask(PhysicsTask task) {
 		String id;
 		if (hasWorld(id = getWorldKey(task.world)))
 			if (task instanceof PhysicsCalculationTask)
-				calcTaskList.get(worldIDList.indexOf(id)).add((PhysicsCalculationTask) task);
+				calcTaskList.get(worldIdList.indexOf(id)).add((PhysicsCalculationTask) task);
 			else if (task instanceof PhysicsFellTask)
-				fellTaskList.get(worldIDList.indexOf(id)).add((PhysicsFellTask) task);
+				fellTaskList.get(worldIdList.indexOf(id)).add((PhysicsFellTask) task);
 			else
 				throw new IllegalArgumentException("Invalid task supplied to PhysicsScheduler!");
 	}
 
+	/**
+	 * Creates and schedules a calculation task within the specified world, at the specified location.
+	 * @param world involved in the task
+	 * @param position within the world involving this task
+	 * @deprecated use {@link #scheduleTask(PhysicsTask)} instead
+	 */
 	@Deprecated
 	public void scheduleCalcTask(World world, BlockPos position) {
 		scheduleTask(new PhysicsCalculationTask(this, world, position));

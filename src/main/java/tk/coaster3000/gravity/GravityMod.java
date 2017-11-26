@@ -1,4 +1,24 @@
+/**
+ * Copyright 2017 Coaster3000 (Christopher Krier)
+ *
+ *    Licensed under the Apache License, Version 2.0 (the "License");
+ *    you may not use this file except in compliance with the License.
+ *    You may obtain a copy of the License at
+ *
+ *        http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    Unless required by applicable law or agreed to in writing, software
+ *    distributed under the License is distributed on an "AS IS" BASIS,
+ *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    See the License for the specific language governing permissions and
+ *    limitations under the License.
+ */
 package tk.coaster3000.gravity;
+
+import static net.minecraftforge.common.MinecraftForge.EVENT_BUS;
+import static tk.coaster3000.gravity.GravityMod.MODID;
+import static tk.coaster3000.gravity.GravityMod.MODNAME;
+import static tk.coaster3000.gravity.GravityMod.MODVERSION;
 
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
@@ -9,8 +29,7 @@ import tk.coaster3000.gravity.command.GravityConfigCommand;
 import tk.coaster3000.gravity.common.Config;
 import tk.coaster3000.gravity.scheduler.PhysicsScheduler;
 
-import static net.minecraftforge.common.MinecraftForge.EVENT_BUS;
-import static tk.coaster3000.gravity.GravityMod.*;
+
 
 @Mod(modid = MODID, name = MODNAME, version = MODVERSION)
 public class GravityMod {
@@ -30,20 +49,28 @@ public class GravityMod {
 
 	private PhysicsScheduler physicsScheduler;
 
-
+	/**
+	 * Retrieves the logger assigned to this mod.
+	 * @return Logger instance
+	 */
 	public Logger getLogger() {
 		return logger;
 	}
 
+	/**
+	 * Called on FMLPreInitializationEvent to start the pre-initialization process of the mod.
+	 * @param event the FMLPreInitializationEvent
+	 */
 	@Mod.EventHandler
 	public void onPreInit(FMLPreInitializationEvent event) {
 		this.logger = event.getModLog();
-
 		Config.load(event);
-
-		logger.info("Pre-Initialization Completed.");
 	}
 
+	/**
+	 * Called on FMLInitializationEvent to start the initialization process of the mod.
+	 * @param event the FMLInitializationEvent
+	 */
 	@Mod.EventHandler
 	public void onInit(FMLInitializationEvent event) {
 
@@ -62,6 +89,10 @@ public class GravityMod {
 		logger.info("Initialization Completed.");
 	}
 
+	/**
+	 * Called on FMLServerStartingEvent to register mods commands.
+	 * @param event the FMLServerStartingEvent
+	 */
 	@Mod.EventHandler
 	public void onServerStart(FMLServerStartingEvent event) {
 		event.registerServerCommand(GravityConfigCommand.instance);
