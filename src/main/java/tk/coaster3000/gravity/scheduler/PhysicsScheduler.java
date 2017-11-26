@@ -35,8 +35,6 @@ public class PhysicsScheduler {
 	private static final int CALC_INDEX = 0;
 	private static final int FALL_INDEX = 1;
 
-	//TODO: Implement configuration settings
-
 	/**
 	 * Constructs a new PhysicsScheduler object to handle physics tasks.
 	 */
