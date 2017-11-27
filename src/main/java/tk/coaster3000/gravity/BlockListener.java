@@ -28,8 +28,8 @@ import tk.coaster3000.gravity.scheduler.PhysicsScheduler;
 public class BlockListener {
 
 	/**
-	 * This is.
-	 * @param scheduler scheduler instance
+	 * Constructs the BlockListener object that listens to block events.
+	 * @param scheduler to feed events to.
 	 */
 	public BlockListener(PhysicsScheduler scheduler) {
 		this.scheduler = scheduler;
@@ -46,8 +46,8 @@ public class BlockListener {
 	}
 
 	/**
-	 * asdf.
-	 * @param event s
+	 * Fired when block placements are done.
+	 * @param event involved
 	 */
 	@SubscribeEvent(priority = EventPriority.LOWEST, receiveCanceled = false)
 	public void onBlockPlace(BlockEvent.PlaceEvent event) {
@@ -59,8 +59,8 @@ public class BlockListener {
 	}
 
 	/**
-	 * asdf.
-	 * @param event s
+	 * Fired when neighbor change events occur (Block Updates).
+	 * @param event involved
 	 */
 	@SubscribeEvent(priority = EventPriority.LOWEST, receiveCanceled = false)
 	public void onBlockNeighborChange(BlockEvent.NeighborNotifyEvent event) {
