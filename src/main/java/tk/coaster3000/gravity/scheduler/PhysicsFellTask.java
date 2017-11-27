@@ -17,9 +17,9 @@ package tk.coaster3000.gravity.scheduler;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.Event;
+import tk.coaster3000.gravity.IWorldHandle;
 import tk.coaster3000.gravity.event.BlockPhysicsEvent;
 import tk.coaster3000.gravity.util.PhysicsUtil;
 
@@ -27,23 +27,23 @@ public class PhysicsFellTask extends PhysicsTask {
 	/**
 	 * Constructs a block felling task that is used in the Physics scheduler to make blocks fall.
 	 * @param scheduler used to schedule additional tasks if needed
-	 * @param world involved in the task
+	 * @param worldHandle involved in the task
 	 * @param position within the world involved in the task
 	 */
-	public PhysicsFellTask(PhysicsScheduler scheduler, World world, BlockPos position) {
-		super(scheduler, world, position);
+	public PhysicsFellTask(PhysicsScheduler scheduler, IWorldHandle worldHandle, BlockPos position) {
+		super(scheduler, worldHandle, position);
 	}
 
 	@Override
 	void execute() {
-		IBlockState blockState = world.getBlockState(position);
+		IBlockState blockState = worldHandle.getBlockState(position);
 
-		BlockPhysicsEvent.Fall bpfEvent = new BlockPhysicsEvent.Fall(world, position, blockState);
+		BlockPhysicsEvent.Fall bpfEvent = new BlockPhysicsEvent.Fall(worldHandle, position, blockState);
 
 		MinecraftForge.EVENT_BUS.post(bpfEvent);
 
 		if (!(bpfEvent.isCanceled() || bpfEvent.getResult().equals(Event.Result.DENY))) {
-			PhysicsUtil.fellBlock(world, position, blockState);
+			PhysicsUtil.fellBlock(worldHandle, position, blockState);
 		}
 	}
 

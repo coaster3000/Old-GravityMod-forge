@@ -15,7 +15,6 @@
  */
 package tk.coaster3000.gravity;
 
-import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -36,8 +35,8 @@ public class PhysicsHandler {
 		this.physicsScheduler = physicsScheduler;
 	}
 
-	void onPhysicsTick(World world) {
-		physicsScheduler.handleTick(world);
+	void onPhysicsTick(IWorldHandle worldHandle) {
+		physicsScheduler.handleTick(worldHandle);
 	}
 
 	/**
@@ -46,14 +45,15 @@ public class PhysicsHandler {
 	 */
 	@SubscribeEvent(priority = EventPriority.LOWEST, receiveCanceled = false)
 	public void onEvent(TickEvent.WorldTickEvent event) {
-		if (!physicsScheduler.hasWork(event.world)) return;
+		IWorldHandle worldHandle = new WorldHandle(event.world);
+		if (!physicsScheduler.hasWork(worldHandle)) return;
 
-		PhysicsTickEvent tickEvent = new PhysicsTickEvent(Phase.START, event.world);
+		PhysicsTickEvent tickEvent = new PhysicsTickEvent(Phase.START, worldHandle);
 		MinecraftForge.EVENT_BUS.post(tickEvent);
 
 		if (!tickEvent.isCanceled()) {
-			onPhysicsTick(tickEvent.world);
-			tickEvent = new PhysicsTickEvent(Phase.END, event.world);
+			onPhysicsTick(tickEvent.worldHandle);
+			tickEvent = new PhysicsTickEvent(Phase.END, worldHandle);
 			MinecraftForge.EVENT_BUS.post(tickEvent);
 		}
 	}

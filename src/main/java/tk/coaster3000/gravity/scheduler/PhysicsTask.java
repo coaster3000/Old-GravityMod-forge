@@ -16,18 +16,18 @@
 package tk.coaster3000.gravity.scheduler;
 
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import tk.coaster3000.gravity.IWorldHandle;
 
 
 abstract class PhysicsTask implements Comparable<PhysicsTask> {
 
-	final World world;
+	final IWorldHandle worldHandle;
 	final BlockPos position;
 	final PhysicsScheduler scheduler;
 
-	PhysicsTask(PhysicsScheduler scheduler, World world, BlockPos position) {
+	PhysicsTask(PhysicsScheduler scheduler, IWorldHandle worldHandle, BlockPos position) {
 		this.scheduler = scheduler;
-		this.world = world;
+		this.worldHandle = worldHandle;
 		this.position = position;
 	}
 

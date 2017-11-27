@@ -17,12 +17,15 @@ package tk.coaster3000.gravity.event;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
 import net.minecraftforge.event.world.BlockEvent;
+import tk.coaster3000.gravity.IWorldHandle;
 
 public class BlockPhysicsEvent extends BlockEvent {
-	BlockPhysicsEvent(World world, BlockPos pos, IBlockState state) {
-		super(world, pos, state);
+	final IWorldHandle worldHandle;
+
+	BlockPhysicsEvent(IWorldHandle worldHandle, BlockPos pos, IBlockState state) {
+		super(worldHandle.getWorld(), pos, state);
+		this.worldHandle = worldHandle;
 	}
 
 	/**
@@ -31,12 +34,12 @@ public class BlockPhysicsEvent extends BlockEvent {
 	public static class Check extends BlockPhysicsEvent {
 		/**
 		 * Constructs an event object from the specified world, position, and state parameters.
-		 * @param world event involves
+		 * @param worldHandle event involves
 		 * @param position event involves
 		 * @param state the block state involved at the position in the world
 		 */
-		public Check(World world, BlockPos position, IBlockState state) {
-			super(world, position, state);
+		public Check(IWorldHandle worldHandle, BlockPos position, IBlockState state) {
+			super(worldHandle, position, state);
 		}
 
 		@Override
@@ -51,12 +54,12 @@ public class BlockPhysicsEvent extends BlockEvent {
 	public static class Fall extends BlockPhysicsEvent {
 		/**
 		 * Constructs an event object from the specified world, position, and state parameters.
-		 * @param world event involves
+		 * @param worldHandle event involves
 		 * @param position event involves
 		 * @param state the block state involved at the position in the world
 		 */
-		public Fall(World world, BlockPos position, IBlockState state) {
-			super(world, position, state);
+		public Fall(IWorldHandle worldHandle, BlockPos position, IBlockState state) {
+			super(worldHandle, position, state);
 		}
 
 		@Override

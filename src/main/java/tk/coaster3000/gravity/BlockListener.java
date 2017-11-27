@@ -37,12 +37,12 @@ public class BlockListener {
 
 	PhysicsScheduler scheduler;
 
-	private boolean canFall(World world, BlockPos pos) {
-		return canFall(world, pos, world.getBlockState(pos));
+	private boolean canFall(IWorldHandle worldHandle, BlockPos pos) {
+		return canFall(worldHandle, pos, worldHandle.getBlockState(pos));
 	}
 
-	private boolean canFall(World world, BlockPos pos, IBlockState blockState) {
-		return !(blockState.getBlock().getRegistryName() != null && blockState.getBlock().getRegistryName().toString().equals("minecraft:bedrock")) && (world.isAirBlock(pos.down()) || BlockFalling.canFallThrough(world.getBlockState(pos.down())));
+	private boolean canFall(IWorldHandle worldHandle, BlockPos pos, IBlockState blockState) {
+		return !(blockState.getBlock().getRegistryName() != null && blockState.getBlock().getRegistryName().toString().equals("minecraft:bedrock")) && (worldHandle.isAirBlock(pos.down()) || BlockFalling.canFallThrough(worldHandle.getBlockState(pos.down())));
 	}
 
 	/**
@@ -55,7 +55,7 @@ public class BlockListener {
 		if (world.isRemote) return; //Ignore the event
 		BlockPos pos = event.getPos();
 
-		scheduler.scheduleCalcTask(world, pos);
+		scheduler.scheduleCalcTask(new WorldHandle(world), pos);
 	}
 
 	/**
@@ -70,7 +70,7 @@ public class BlockListener {
 		BlockPos sPos = event.getPos(); // FIXME: Blocks near final layer of world will cause world to PLUMMET INTO DARKNESS
 		for (EnumFacing face : event.getNotifiedSides()) { // Test horizontal
 			BlockPos pos = sPos.offset(face);
-			scheduler.scheduleCalcTask(world, pos);
+			scheduler.scheduleCalcTask(new WorldHandle(world), pos);
 
 		}
 

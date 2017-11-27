@@ -15,14 +15,13 @@
  */
 package tk.coaster3000.gravity.util;
 
-import net.minecraft.block.Block;
 import net.minecraft.block.BlockFalling;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.item.EntityFallingBlock;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import tk.coaster3000.gravity.IWorldHandle;
 
 public class PhysicsUtil {
 
@@ -32,14 +31,14 @@ public class PhysicsUtil {
 
 	/**
 	 * Tells whether block is able to fall based on physics and whether it is allowed physics.
-	 * @see #canBlockFall(World, BlockPos, IBlockState)
+	 * @see #canBlockFall(IWorldHandle, BlockPos, IBlockState)
 	 * @see #isBlockAllowedPhysics(IBlockState)
-	 * @param world to check if the block can fall
+	 * @param worldHandle to check if the block can fall
 	 * @param position within the world to check if the block can fall
 	 * @return true if block can fall, false otherwise
 	 */
-	public static boolean canBlockFall(World world, BlockPos position) {
-		return canBlockFall(world, position, world.getBlockState(position));
+	public static boolean canBlockFall(IWorldHandle worldHandle, BlockPos position) {
+		return canBlockFall(worldHandle, position, worldHandle.getBlockState(position));
 	}
 
 	/**
@@ -50,7 +49,7 @@ public class PhysicsUtil {
 	 * @param blockState block state to use when checking if the block can fall
 	 * @return true if block can fall, false otherwise
 	 */
-	public static boolean canBlockFall(World world, BlockPos position, IBlockState blockState) {
+	public static boolean canBlockFall(IWorldHandle world, BlockPos position, IBlockState blockState) {
 		return isBlockAllowedPhysics(blockState) && (world.isAirBlock(position.down()) || BlockFalling.canFallThrough(world.getBlockState(position.down())));
 	}
 
@@ -68,7 +67,7 @@ public class PhysicsUtil {
 	 * @param world to have the block fall in
 	 * @param position within the world to have the block fall in
 	 */
-	public static void fellBlock(World world, BlockPos position) {
+	public static void fellBlock(IWorldHandle world, BlockPos position) {
 		fellBlock(world, position, world.getBlockState(position));
 	}
 
@@ -78,12 +77,12 @@ public class PhysicsUtil {
 	 * @param position within the world to have the block fall in
 	 * @param blockState block state to use when having the block fall within the world
 	 */
-	public static void fellBlock(World world, BlockPos position, IBlockState blockState) {
+	public static void fellBlock(IWorldHandle world, BlockPos position, IBlockState blockState) {
 		double x = position.getX() + 0.5;
 		double y = position.getY();
 		double z = position.getZ() + 0.5;
 
-		EntityFallingBlock ent = new EntityFallingBlock(world, x, y, z, blockState);
+		EntityFallingBlock ent = new EntityFallingBlock(world.getWorld(), x, y, z, blockState);
 		ent.setOrigin(position.add(0.5,0,0.5));
 		ent.preventEntitySpawning = false;
 

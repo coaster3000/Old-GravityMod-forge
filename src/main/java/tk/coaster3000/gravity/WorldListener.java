@@ -38,7 +38,7 @@ public class WorldListener {
 	@SubscribeEvent
 	public void onEvent(WorldEvent.Load event) {
 		if (event.getWorld().isRemote) return;
-		physicsScheduler.addWorld(event.getWorld());
+		physicsScheduler.addWorld(new WorldHandle(event.getWorld()));
 	}
 
 	/**
@@ -48,6 +48,6 @@ public class WorldListener {
 	@SubscribeEvent
 	public void onEvent(WorldEvent.Unload event) {
 		if (event.getWorld().isRemote) return;
-		physicsScheduler.removeWorld(event.getWorld());
+		physicsScheduler.removeWorld(new WorldHandle(event.getWorld()));
 	}
 }

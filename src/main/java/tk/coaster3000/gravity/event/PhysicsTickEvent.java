@@ -15,12 +15,12 @@
  */
 package tk.coaster3000.gravity.event;
 
-import net.minecraft.world.World;
 import net.minecraftforge.fml.common.eventhandler.Event;
+import tk.coaster3000.gravity.IWorldHandle;
 
 public class PhysicsTickEvent extends Event {
 	public final Phase phase;
-	public final World world;
+	public final IWorldHandle worldHandle;
 
 	public enum Phase {
 		START, END
@@ -29,11 +29,11 @@ public class PhysicsTickEvent extends Event {
 	/**
 	 * Constructs a Physics Tick Event for use within the event system.
 	 * @param phase the phase of the event, see {@link Phase}
-	 * @param world involved in the event
+	 * @param worldHandle involved in the event
 	 */
-	public PhysicsTickEvent(Phase phase, World world) {
+	public PhysicsTickEvent(Phase phase, IWorldHandle worldHandle) {
 		this.phase = phase;
-		this.world = world;
+		this.worldHandle = worldHandle;
 	}
 
 	@Override

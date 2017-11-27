@@ -17,8 +17,8 @@ package tk.coaster3000.gravity.scheduler;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
+import tk.coaster3000.gravity.IWorldHandle;
 import tk.coaster3000.gravity.event.BlockPhysicsEvent;
 import tk.coaster3000.gravity.util.PhysicsUtil;
 
@@ -27,24 +27,24 @@ public class PhysicsCalculationTask extends PhysicsTask {
 	/**
 	 * Constructs a calculation task that is used in the Physics scheduler to perform physics checks.
 	 * @param scheduler used to schedule additional tasks once this task is complete
-	 * @param world involved in the task
+	 * @param worldHandle involved in the task
 	 * @param position within the world involved in the task
 	 */
-	public PhysicsCalculationTask(PhysicsScheduler scheduler, World world, BlockPos position) {
-		super(scheduler, world, position);
+	public PhysicsCalculationTask(PhysicsScheduler scheduler, IWorldHandle worldHandle, BlockPos position) {
+		super(scheduler, worldHandle, position);
 	}
 
 	@Override
 	void execute() {
-		IBlockState blockState = world.getBlockState(position);
-		BlockPhysicsEvent.Check bpcEvent = new BlockPhysicsEvent.Check(world, position, blockState);
+		IBlockState blockState = worldHandle.getBlockState(position);
+		BlockPhysicsEvent.Check bpcEvent = new BlockPhysicsEvent.Check(worldHandle, position, blockState);
 
 		MinecraftForge.EVENT_BUS.post(bpcEvent);
 
 		if (!bpcEvent.isCanceled()) {
-			boolean isFalling = PhysicsUtil.canBlockFall(world, position, blockState);
+			boolean isFalling = PhysicsUtil.canBlockFall(worldHandle, position, blockState);
 			if (isFalling) {
-				scheduler.scheduleTask(new PhysicsFellTask(scheduler, world, position));
+				scheduler.scheduleTask(new PhysicsFellTask(scheduler, worldHandle, position));
 			}
 		}
 	}

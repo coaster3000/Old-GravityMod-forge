@@ -16,7 +16,7 @@
 package tk.coaster3000.gravity.scheduler;
 
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import tk.coaster3000.gravity.IWorldHandle;
 import tk.coaster3000.gravity.common.Config;
 
 import java.util.ArrayList;
@@ -49,7 +49,7 @@ public class PhysicsScheduler {
 	 * Used to add a world to the tick handler.
 	 * @param world to add
 	 */
-	public void addWorld(World world) {
+	public void addWorld(IWorldHandle world) {
 		String id;
 		if (worldIdList.contains(id = getWorldKey(world))) return;
 
@@ -63,7 +63,7 @@ public class PhysicsScheduler {
 	 * Normally is called when a world is unloaded.
 	 * @param world to remove
 	 */
-	public void removeWorld(World world) {
+	public void removeWorld(IWorldHandle world) {
 		String id;
 		if (worldIdList.contains(id = getWorldKey(world))) {
 			//TODO: Implement physics check serialization to store uncalculated physics.
@@ -79,7 +79,7 @@ public class PhysicsScheduler {
 	 * @param world to check
 	 * @return true if world gets processed in scheduler, false if not
 	 */
-	private boolean hasWorld(World world) {
+	private boolean hasWorld(IWorldHandle world) {
 		return hasWorld(getWorldKey(world));
 	}
 
@@ -99,7 +99,7 @@ public class PhysicsScheduler {
 	 * @param world to check
 	 * @return true if work present on world, otherwise false
 	 */
-	public boolean hasWork(World world) {
+	public boolean hasWork(IWorldHandle world) {
 		return hasWork(getWorldKey(world));
 	}
 
@@ -118,7 +118,7 @@ public class PhysicsScheduler {
 	 * Called for a world tick to handle physics tasks for specified world.
 	 * @param world to handle physics
 	 */
-	public void handleTick(World world) {
+	public void handleTick(IWorldHandle world) {
 		String id;
 		if (hasWork(id = getWorldKey(world))) {
 			List<PhysicsTask> tasks = new ArrayList<>();
@@ -159,7 +159,7 @@ public class PhysicsScheduler {
 	 */
 	void scheduleTask(PhysicsTask task) {
 		String id;
-		if (hasWorld(id = getWorldKey(task.world)))
+		if (hasWorld(id = getWorldKey(task.worldHandle)))
 			if (task instanceof PhysicsCalculationTask)
 				calcTaskList.get(worldIdList.indexOf(id)).add((PhysicsCalculationTask) task);
 			else if (task instanceof PhysicsFellTask)
@@ -175,11 +175,11 @@ public class PhysicsScheduler {
 	 * @deprecated use {@link #scheduleTask(PhysicsTask)} instead
 	 */
 	@Deprecated
-	public void scheduleCalcTask(World world, BlockPos position) {
+	public void scheduleCalcTask(IWorldHandle world, BlockPos position) {
 		scheduleTask(new PhysicsCalculationTask(this, world, position));
 	}
 
-	private static String getWorldKey(World world) {
-		return world.getWorldInfo().getWorldName() + ":" + world.provider.getDimension();
+	private static String getWorldKey(IWorldHandle world) {
+		return world.getName() + ":" + world.getDimension();
 	}
 }
