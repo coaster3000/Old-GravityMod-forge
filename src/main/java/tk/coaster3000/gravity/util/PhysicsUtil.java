@@ -15,6 +15,7 @@
  */
 package tk.coaster3000.gravity.util;
 
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockFalling;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.item.EntityFallingBlock;
@@ -22,6 +23,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import tk.coaster3000.gravity.IWorldHandle;
+import tk.coaster3000.gravity.common.Config;
 
 public class PhysicsUtil {
 
@@ -59,7 +61,27 @@ public class PhysicsUtil {
 	 * @return true if block is not air or bedrock and is allowed to fall, false otherwise
 	 */
 	public static boolean isBlockAllowedPhysics(IBlockState blockState) {
-		return blockState.getBlock() != Blocks.AIR && !isStringEqual(blockState.getBlock().getRegistryName(), "minecraft:bedrock");
+		if (blockState.getBlock() == Blocks.AIR) return false;
+
+		String[] bla = Config.getBlockPhysicsBlacklist();
+		String[] wla = Config.getBlockPhysicsWhitelist();
+
+		boolean ret = true;
+		for (String bl : bla) {
+			if (isStringEqual(blockState.getBlock().getRegistryName(),bl)) {
+				ret = false;
+				break;
+			}
+		}
+
+		for (String wl : wla) {
+			if (isStringEqual(blockState.getBlock().getRegistryName(), wl)) {
+				ret = true;
+				break;
+			}
+		}
+
+		return ret;
 	}
 
 	/**
