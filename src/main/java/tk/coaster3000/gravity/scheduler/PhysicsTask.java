@@ -19,11 +19,12 @@ import net.minecraft.util.math.BlockPos;
 import tk.coaster3000.gravity.IWorldHandle;
 
 
-abstract class PhysicsTask implements Comparable<PhysicsTask> {
+abstract class PhysicsTask implements Comparable<PhysicsTask>, Task {
 
 	final IWorldHandle worldHandle;
 	final BlockPos position;
 	final PhysicsScheduler scheduler;
+	private boolean isComplete;
 
 	PhysicsTask(PhysicsScheduler scheduler, IWorldHandle worldHandle, BlockPos position) {
 		this.scheduler = scheduler;
@@ -31,5 +32,17 @@ abstract class PhysicsTask implements Comparable<PhysicsTask> {
 		this.position = position;
 	}
 
-	abstract void execute();
+	public abstract void execute();
+
+	/**
+	 * Marks the task as complete.
+	 */
+	final void markComplete() {
+		this.isComplete = true;
+	}
+
+	@Override
+	public final boolean isCompleted() {
+		return this.isComplete;
+	}
 }

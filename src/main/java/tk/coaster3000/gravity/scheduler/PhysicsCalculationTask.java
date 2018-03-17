@@ -22,7 +22,7 @@ import tk.coaster3000.gravity.IWorldHandle;
 import tk.coaster3000.gravity.event.BlockPhysicsEvent;
 import tk.coaster3000.gravity.util.PhysicsUtil;
 
-public class PhysicsCalculationTask extends PhysicsTask {
+public class PhysicsCalculationTask extends PhysicsTask implements ValidatedTask {
 
 	/**
 	 * Constructs a calculation task that is used in the Physics scheduler to perform physics checks.
@@ -35,7 +35,7 @@ public class PhysicsCalculationTask extends PhysicsTask {
 	}
 
 	@Override
-	void execute() {
+	public void execute() {
 		IBlockState blockState = worldHandle.getBlockState(position);
 		BlockPhysicsEvent.Check bpcEvent = new BlockPhysicsEvent.Check(worldHandle, position, blockState);
 
@@ -47,10 +47,17 @@ public class PhysicsCalculationTask extends PhysicsTask {
 				scheduler.scheduleTask(new PhysicsFellTask(scheduler, worldHandle, position));
 			}
 		}
+
+		markComplete();
 	}
 
 	@Override
 	public int compareTo(PhysicsTask o) {
 		return 0;
+	}
+
+	@Override
+	public boolean isValid() {
+		return false;
 	}
 }

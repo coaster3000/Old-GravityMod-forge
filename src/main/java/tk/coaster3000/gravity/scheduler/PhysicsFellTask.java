@@ -23,7 +23,7 @@ import tk.coaster3000.gravity.IWorldHandle;
 import tk.coaster3000.gravity.event.BlockPhysicsEvent;
 import tk.coaster3000.gravity.util.PhysicsUtil;
 
-public class PhysicsFellTask extends PhysicsTask {
+public class PhysicsFellTask extends PhysicsTask implements ValidatedTask {
 	/**
 	 * Constructs a block felling task that is used in the Physics scheduler to make blocks fall.
 	 * @param scheduler used to schedule additional tasks if needed
@@ -35,7 +35,7 @@ public class PhysicsFellTask extends PhysicsTask {
 	}
 
 	@Override
-	void execute() {
+	public void execute() {
 		IBlockState blockState = worldHandle.getBlockState(position);
 
 		BlockPhysicsEvent.Fall bpfEvent = new BlockPhysicsEvent.Fall(worldHandle, position, blockState);
@@ -45,6 +45,11 @@ public class PhysicsFellTask extends PhysicsTask {
 		if (!(bpfEvent.isCanceled() || bpfEvent.getResult().equals(Event.Result.DENY))) {
 			PhysicsUtil.fellBlock(worldHandle, position, blockState);
 		}
+
+		//TODO: Cache the task for validation
+		//TODO: Cache the result of the fell task to validate on event completion
+
+		markComplete();
 	}
 
 	@Override
@@ -58,5 +63,10 @@ public class PhysicsFellTask extends PhysicsTask {
 
 		if (diff != 0) return diff; // check X
 		else return Integer.compare(position.getZ(), oPosition.getZ()); //return Z
+	}
+
+	@Override
+	public boolean isValid() {
+		return false; //FIXME: Check for validity.
 	}
 }
