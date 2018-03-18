@@ -20,9 +20,9 @@ def mod_group     = "tk.coaster3000"
 def mod_id        = "physicsmod"
 def mod_name      = "PhysicsMod"
 def mod_version   = "0.0.1"
-def mc_version    = "1.12.1"
-def forge_version = "14.22.1.2478"
-def forge_mapping = "snapshot_20170624"
+def mc_version    = "1.12.2"
+def forge_version = "14.23.2.2628"
+def forge_mapping = "snapshot_20171003"
 
 //Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
 
