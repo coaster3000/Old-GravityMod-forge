@@ -25,7 +25,7 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import org.apache.logging.log4j.Logger;
-import tk.coaster3000.gravity.command.GravityConfigCommand;
+import tk.coaster3000.gravity.command.GravityCommand;
 import tk.coaster3000.gravity.common.Config;
 import tk.coaster3000.gravity.scheduler.PhysicsScheduler;
 
@@ -95,6 +95,6 @@ public class GravityMod {
 	 */
 	@Mod.EventHandler
 	public void onServerStart(FMLServerStartingEvent event) {
-		event.registerServerCommand(GravityConfigCommand.instance);
+		event.registerServerCommand(GravityCommand.instance);
 	}
 }

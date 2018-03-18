@@ -1,19 +1,20 @@
 commands.gravity.usage=/gravity [set|get|save|load]
-commands.gravity.save.usage=/gravity save
-commands.gravity.save.complete=Config file for Gravity successfully saved!
-commands.gravity.save.error=An error has occurred while saving Gravity's config: %1$s
-commands.gravity.load.usage=/gravity load
-commands.gravity.load.complete=Config file for Gravity successfully saved!
-commands.gravity.load.error=An error has occurred while loading Gravity's config: %1$s
-commands.gravity.get.result="%1$s" is set to "%2$s"
-commands.gravity.get.usage=/gravity get [config]
-commands.gravity.get.invalid=%1$s is not a valid key!
-commands.gravity.get.list=The following settings may be retrieved: %1$s
-commands.gravity.set.usage=/gravity set [config] [value]
-commands.gravity.set.list=The following settings may be set: %1$s
-commands.gravity.set.result="%1$s" has been set to "%2$s"
-commands.gravity.set.invalid=%1$s is not a valid key!
-commands.gravity.get.invalidcast=An error has occurred during casting for config key %1$s: %2$s is not a valid type to cast to.
+commands.gravity.config.usage=/gravity config [set|get|save|load]
+commands.gravity.config.save.usage=/gravity config save
+commands.gravity.config.save.complete=Config file for Gravity successfully saved!
+commands.gravity.config.save.error=An error has occurred while saving Gravity's config: %1$s
+commands.gravity.config.load.usage=/gravity config load
+commands.gravity.config.load.complete=Config file for Gravity successfully saved!
+commands.gravity.config.load.error=An error has occurred while loading Gravity's config: %1$s
+commands.gravity.config.get.result="%1$s" is set to "%2$s"
+commands.gravity.config.get.usage=/gravity config get [config]
+commands.gravity.config.get.invalid=%1$s is not a valid key!
+commands.gravity.config.get.list=The following settings may be retrieved: %1$s
+commands.gravity.config.set.usage=/gravity config set [config] [value]
+commands.gravity.config.set.list=The following settings may be set: %1$s
+commands.gravity.config.set.result="%1$s" has been set to "%2$s"
+commands.gravity.config.set.invalid=%1$s is not a valid key!
+commands.gravity.config.get.invalidcast=An error has occurred during casting for config key %1$s: %2$s is not a valid type to cast to.
 
 
 

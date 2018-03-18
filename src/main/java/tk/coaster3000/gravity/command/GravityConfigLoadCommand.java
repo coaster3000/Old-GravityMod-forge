@@ -37,16 +37,16 @@ public class GravityConfigLoadCommand extends CommandBase {
 
 	@Override
 	public String getUsage(ICommandSender sender) {
-		return "commands.gravity.load.usage";
+		return "commands.gravity.config.load.usage";
 	}
 
 	@Override
 	public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
 		try {
 			Config.loadConfig();
-			sender.sendMessage(new TextComponentTranslation("commands.gravity.load.complete"));
+			sender.sendMessage(new TextComponentTranslation("commands.gravity.reload.complete"));
 		} catch (Exception e) {
-			sender.sendMessage(new TextComponentTranslation("commands.gravity.load.error", e.getMessage()));
+			sender.sendMessage(new TextComponentTranslation("commands.gravity.reload.error", e.getMessage()));
 		}
 
 	}

@@ -37,7 +37,7 @@ public class GravityConfigSaveCommand extends CommandBase {
 
 	@Override
 	public String getUsage(ICommandSender sender) {
-		return "commands.gravity.save.usage";
+		return "commands.gravity.config.save.usage";
 	}
 
 	@Override

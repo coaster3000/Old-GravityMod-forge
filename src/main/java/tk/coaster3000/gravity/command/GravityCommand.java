@@ -1,5 +1,5 @@
 /**
- * Copyright 2017 Coaster3000 (Christopher Krier)
+ * Copyright 2018 Coaster3000 (Christopher Krier)
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -13,21 +13,20 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
+
 package tk.coaster3000.gravity.command;
 
 import net.minecraft.command.ICommandSender;
 import net.minecraftforge.server.command.CommandTreeBase;
 
-public class GravityConfigCommand extends CommandTreeBase {
-	static final String CMD_NAME = "config";
+public class GravityCommand extends CommandTreeBase {
+	static final String CMD_NAME = "gravity";
 
-	public static GravityConfigCommand instance = new GravityConfigCommand();
+	public static GravityCommand instance = new GravityCommand();
 
-	private GravityConfigCommand() {
-		addSubcommand(GravityConfigSetCommand.instance);
-		addSubcommand(GravityConfigGetCommand.instance);
-		addSubcommand(GravityConfigSaveCommand.instance);
-		addSubcommand(GravityConfigLoadCommand.instance);
+	private GravityCommand() {
+		addSubcommand(GravityConfigCommand.instance);
+		addSubcommand(GravityLogicCommand.instance);
 	}
 
 	@Override
@@ -37,6 +36,6 @@ public class GravityConfigCommand extends CommandTreeBase {
 
 	@Override
 	public String getUsage(ICommandSender sender) {
-		return "commands.gravity.config.usage";
+		return "commands.gravity.usage";
 	}
 }
