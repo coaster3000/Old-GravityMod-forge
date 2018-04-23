@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright 2018 Coaster3000 (Christopher Krier)
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
