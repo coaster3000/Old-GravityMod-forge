@@ -14,14 +14,19 @@
  *    limitations under the License.
  */
 
-package tk.coaster3000.gravity.scheduler;
+package tk.coaster3000.gravity.util;
 
-public interface ValidatedTask {
+import net.minecraft.world.World;
+import tk.coaster3000.gravity.IWorldHandle;
+import tk.coaster3000.gravity.WorldHandle;
+
+public class Util {
 	/**
-	 * Retrieves whether the task is valid.
-	 * @return true if valid, otherwise false.
+	 * Wraps a world in a world handle for abstraction purpose.
+	 * @param world for the world handle object
+	 * @return a new world handle object.
 	 */
-	default boolean isValid() {
-		return true;
+	public static IWorldHandle wrapWorld(World world) {
+		return new WorldHandle(world);
 	}
 }

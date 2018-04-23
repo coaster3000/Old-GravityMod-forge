@@ -22,21 +22,21 @@ import net.minecraftforge.fml.common.gameevent.TickEvent;
 import tk.coaster3000.gravity.event.PhysicsTickEvent;
 import tk.coaster3000.gravity.event.PhysicsTickEvent.Phase;
 import tk.coaster3000.gravity.scheduler.PhysicsScheduler;
+import tk.coaster3000.gravity.util.Util;
 
 public class PhysicsHandler {
-
-	private PhysicsScheduler physicsScheduler;
-
 	/**
-	 * Constructs a PhysicsHandler which handles game events to produce physics tasks.
-	 * @param physicsScheduler scheduler used to add physics tasks.
+	 * Constructs a physics handler.
+	 * @param physicsScheduler physics scheduler object to execute physics tasks
 	 */
 	public PhysicsHandler(PhysicsScheduler physicsScheduler) {
 		this.physicsScheduler = physicsScheduler;
 	}
 
-	void onPhysicsTick(IWorldHandle worldHandle) {
-		physicsScheduler.handleTick(worldHandle);
+	private final PhysicsScheduler physicsScheduler;
+
+	private void onPhysicsTick(IWorldHandle worldHandle) {
+		physicsScheduler.run(worldHandle);
 	}
 
 	/**
@@ -45,15 +45,12 @@ public class PhysicsHandler {
 	 */
 	@SubscribeEvent(priority = EventPriority.LOWEST, receiveCanceled = false)
 	public void onEvent(TickEvent.WorldTickEvent event) {
-		IWorldHandle worldHandle = new WorldHandle(event.world);
-		if (!physicsScheduler.hasWork(worldHandle)) return;
 
-		PhysicsTickEvent tickEvent = new PhysicsTickEvent(Phase.START, worldHandle);
-		MinecraftForge.EVENT_BUS.post(tickEvent);
+		PhysicsTickEvent tickEvent = new PhysicsTickEvent(Phase.START, Util.wrapWorld(event.world));
 
-		if (!tickEvent.isCanceled()) {
+		if (!MinecraftForge.EVENT_BUS.post(tickEvent)) {
 			onPhysicsTick(tickEvent.worldHandle);
-			tickEvent = new PhysicsTickEvent(Phase.END, worldHandle);
+			tickEvent = new PhysicsTickEvent(Phase.END, tickEvent.worldHandle);
 			MinecraftForge.EVENT_BUS.post(tickEvent);
 		}
 	}

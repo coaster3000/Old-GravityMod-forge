@@ -14,14 +14,19 @@
  *    limitations under the License.
  */
 
-package tk.coaster3000.gravity.scheduler;
+package tk.coaster3000.gravity.event;
 
-public interface ValidatedTask {
+import net.minecraftforge.fml.common.eventhandler.Event;
+import tk.coaster3000.gravity.logic.LogicController;
+
+public class GravityLogicLoadEvent extends Event {
+	LogicController controller;
+
 	/**
-	 * Retrieves whether the task is valid.
-	 * @return true if valid, otherwise false.
+	 * Construcst the GravityLogicLoadEvent
+	 * @param controller Logic Controller for event
 	 */
-	default boolean isValid() {
-		return true;
+	public GravityLogicLoadEvent(LogicController controller) {
+		this.controller = controller;
 	}
 }

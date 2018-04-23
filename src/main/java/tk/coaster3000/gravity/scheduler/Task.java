@@ -16,12 +16,7 @@
 
 package tk.coaster3000.gravity.scheduler;
 
-public interface Task {
-
-	/**
-	 * Executes the task object.
-	 */
-	void execute();
+public interface Task extends Runnable {
 
 	/**
 	 * Returns whether or not the task has been completed.

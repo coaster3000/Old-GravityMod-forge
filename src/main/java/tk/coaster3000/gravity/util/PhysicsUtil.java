@@ -15,8 +15,6 @@
  */
 package tk.coaster3000.gravity.util;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockFalling;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.item.EntityFallingBlock;
 import net.minecraft.init.Blocks;
@@ -31,29 +29,6 @@ public class PhysicsUtil {
 		return string.equals((resource != null ? resource.toString() : ""));
 	}
 
-	/**
-	 * Tells whether block is able to fall based on physics and whether it is allowed physics.
-	 * @see #canBlockFall(IWorldHandle, BlockPos, IBlockState)
-	 * @see #isBlockAllowedPhysics(IBlockState)
-	 * @param worldHandle to check if the block can fall
-	 * @param position within the world to check if the block can fall
-	 * @return true if block can fall, false otherwise
-	 */
-	public static boolean canBlockFall(IWorldHandle worldHandle, BlockPos position) {
-		return canBlockFall(worldHandle, position, worldHandle.getBlockState(position));
-	}
-
-	/**
-	 * Tells whether block is able to fall based on physics and whether it is allowed physics.
-	 * @see #isBlockAllowedPhysics(IBlockState)
-	 * @param world to check if the block can fall
-	 * @param position within the world to check if the block can fall
-	 * @param blockState block state to use when checking if the block can fall
-	 * @return true if block can fall, false otherwise
-	 */
-	public static boolean canBlockFall(IWorldHandle world, BlockPos position, IBlockState blockState) {
-		return isBlockAllowedPhysics(blockState) && (world.isAirBlock(position.down()) || BlockFalling.canFallThrough(world.getBlockState(position.down())));
-	}
 
 	/**
 	 * Tells whether a block is allowed to fall.
@@ -61,10 +36,10 @@ public class PhysicsUtil {
 	 * @return true if block is not air or bedrock and is allowed to fall, false otherwise
 	 */
 	public static boolean isBlockAllowedPhysics(IBlockState blockState) {
-		if (blockState.getBlock() == Blocks.AIR) return false;
+		if (blockState.getBlock() == Blocks.AIR) return false; // Ever kill the world with air? Ya, let's not
 
-		String[] bla = Config.getBlockPhysicsBlacklist();
-		String[] wla = Config.getBlockPhysicsWhitelist();
+		String[] bla = Config.getBlockPhysicsBlacklist(); //BlackListArray
+		String[] wla = Config.getBlockPhysicsWhitelist(); //WhiteListArray
 
 		boolean ret = true;
 		for (String bl : bla) {

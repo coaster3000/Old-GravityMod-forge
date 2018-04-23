@@ -1,4 +1,7 @@
-commands.gravity.usage=/gravity [set|get|save|load]
+commands.gravity.usage=/gravity [config|logic]
+commands.gravity.logic.usage=/gravity logic [reload]
+commands.gravity.logic.reload.complete=Gravity logic has been reloaded.
+commands.gravity.logic.reload.error=An error has occurred while reloading Gravity's logic: %1$s
 commands.gravity.config.usage=/gravity config [set|get|save|load]
 commands.gravity.config.save.usage=/gravity config save
 commands.gravity.config.save.complete=Config file for Gravity successfully saved!

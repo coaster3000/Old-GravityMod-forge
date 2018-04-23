@@ -16,12 +16,21 @@
 
 package tk.coaster3000.gravity.scheduler;
 
-public interface ValidatedTask {
+import java.util.NoSuchElementException;
+
+public interface FutureValue<T> {
+
 	/**
-	 * Retrieves whether the task is valid.
-	 * @return true if valid, otherwise false.
+	 * Retrieves the value stored.
+	 * The standard behaviour of this method is to return the value stored, or throw an exception if the value is not ready.
+	 * @return value stored of type T
+	 * @throws NoSuchElementException if the value was not available at the time of the call.
 	 */
-	default boolean isValid() {
-		return true;
-	}
+	T getValue() throws NoSuchElementException;
+
+	/**
+	 * Tells whether or not the value is available to be called upon.
+	 * @return true if value is available, false otherwise
+	 */
+	boolean hasValue();
 }

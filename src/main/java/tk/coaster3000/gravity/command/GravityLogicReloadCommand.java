@@ -13,21 +13,20 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
+
 package tk.coaster3000.gravity.command;
 
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.text.TextComponentTranslation;
-import tk.coaster3000.gravity.common.Config;
 
-public class GravityConfigLoadCommand extends CommandBase {
-	private static final String CMD_NAME = "load";
+public class GravityLogicReloadCommand extends CommandBase {
+	static final String CMD_NAME = "reload";
 
-	static GravityConfigLoadCommand instance = new GravityConfigLoadCommand();
+	static GravityLogicReloadCommand instance = new GravityLogicReloadCommand();
 
-	private GravityConfigLoadCommand() {}
+	private GravityLogicReloadCommand(){}
 
 	@Override
 	public String getName() {
@@ -36,17 +35,11 @@ public class GravityConfigLoadCommand extends CommandBase {
 
 	@Override
 	public String getUsage(ICommandSender sender) {
-		return "commands.gravity.config.load.usage";
+		return "commands.gravity.logic.reload.usage";
 	}
 
 	@Override
 	public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
-		try {
-			Config.loadConfig();
-			sender.sendMessage(new TextComponentTranslation("commands.gravity.reload.complete"));
-		} catch (Exception e) {
-			sender.sendMessage(new TextComponentTranslation("commands.gravity.reload.error", e.getMessage()));
-		}
-
+		//FIXME: Implement Command
 	}
 }

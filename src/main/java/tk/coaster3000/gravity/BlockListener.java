@@ -15,34 +15,21 @@
  */
 package tk.coaster3000.gravity;
 
-import net.minecraft.block.BlockFalling;
-import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import tk.coaster3000.gravity.scheduler.PhysicsScheduler;
+import tk.coaster3000.gravity.scheduler.LogicScheduler;
+import tk.coaster3000.gravity.util.Util;
 
 public class BlockListener {
 
-	/**
-	 * Constructs the BlockListener object that listens to block events.
-	 * @param scheduler to feed events to.
-	 */
-	public BlockListener(PhysicsScheduler scheduler) {
-		this.scheduler = scheduler;
-	}
+	private final LogicScheduler logicScheduler;
 
-	PhysicsScheduler scheduler;
-
-	private boolean canFall(IWorldHandle worldHandle, BlockPos pos) {
-		return canFall(worldHandle, pos, worldHandle.getBlockState(pos));
-	}
-
-	private boolean canFall(IWorldHandle worldHandle, BlockPos pos, IBlockState blockState) {
-		return !(blockState.getBlock().getRegistryName() != null && blockState.getBlock().getRegistryName().toString().equals("minecraft:bedrock")) && (worldHandle.isAirBlock(pos.down()) || BlockFalling.canFallThrough(worldHandle.getBlockState(pos.down())));
+	BlockListener(LogicScheduler scheduler) {
+		this.logicScheduler = scheduler;
 	}
 
 	/**
@@ -55,7 +42,7 @@ public class BlockListener {
 		if (world.isRemote) return; //Ignore the event
 		BlockPos pos = event.getPos();
 
-		scheduler.scheduleCalcTask(new WorldHandle(world), pos);
+		logicScheduler.addTask(Util.wrapWorld(world), pos);
 	}
 
 	/**
@@ -67,12 +54,13 @@ public class BlockListener {
 		World world = event.getWorld();
 		if (world.isRemote) return;
 
-		BlockPos sPos = event.getPos(); // FIXME: Blocks near final layer of world will cause world to PLUMMET INTO DARKNESS
+		BlockPos sPos = event.getPos();
 		for (EnumFacing face : event.getNotifiedSides()) { // Test horizontal
 			BlockPos pos = sPos.offset(face);
-			scheduler.scheduleCalcTask(new WorldHandle(world), pos);
 
+			logicScheduler.addTask(Util.wrapWorld(world), pos);
 		}
+
 
 	}
 }

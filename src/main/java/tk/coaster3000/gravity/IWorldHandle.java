@@ -20,7 +20,9 @@ import net.minecraft.entity.item.EntityFallingBlock;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-public interface IWorldHandle {
+import java.util.function.Supplier;
+
+public interface IWorldHandle extends Supplier<World> {
 
 	/**
 	 * Retrieves the name of the world.
@@ -59,4 +61,9 @@ public interface IWorldHandle {
 	 * @return true if air, false if not
 	 */
 	boolean isAirBlock(BlockPos position);
+
+	@Override
+	default World get() {
+		return getWorld();
+	}
 }

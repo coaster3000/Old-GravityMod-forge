@@ -1,5 +1,5 @@
-/**
- * Copyright 2017 Coaster3000 (Christopher Krier)
+/*
+ * Copyright 2018 Coaster3000 (Christopher Krier)
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -18,21 +18,19 @@ package tk.coaster3000.gravity.scheduler;
 import net.minecraft.util.math.BlockPos;
 import tk.coaster3000.gravity.IWorldHandle;
 
+import java.util.Objects;
 
-abstract class PhysicsTask implements Comparable<PhysicsTask>, Task {
+
+abstract class BlockTask implements Task {
 
 	final IWorldHandle worldHandle;
 	final BlockPos position;
-	final PhysicsScheduler scheduler;
 	private boolean isComplete;
 
-	PhysicsTask(PhysicsScheduler scheduler, IWorldHandle worldHandle, BlockPos position) {
-		this.scheduler = scheduler;
+	BlockTask(IWorldHandle worldHandle, BlockPos position) {
 		this.worldHandle = worldHandle;
 		this.position = position;
 	}
-
-	public abstract void execute();
 
 	/**
 	 * Marks the task as complete.
@@ -44,5 +42,18 @@ abstract class PhysicsTask implements Comparable<PhysicsTask>, Task {
 	@Override
 	public final boolean isCompleted() {
 		return this.isComplete;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || this.getClass() != o.getClass()) return false;
+		BlockTask blockTask = (BlockTask) o;
+		return Objects.equals(worldHandle, blockTask.worldHandle) && Objects.equals(position, blockTask.position);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(worldHandle.getDimension(), position);
 	}
 }

@@ -16,171 +16,208 @@
 
 package tk.coaster3000.gravity.scheduler;
 
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.math.BlockPos;
+import org.apache.logging.log4j.Logger;
+import tk.coaster3000.gravity.GravityMod;
 import tk.coaster3000.gravity.IWorldHandle;
 import tk.coaster3000.gravity.common.Config;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.PriorityQueue;
-import java.util.Queue;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
+public class PhysicsScheduler implements Scheduler<BlockFellTask> {
+	private static SortedMap<BlockPos, BlockFellTask> EMPTY_TASKS = Collections.unmodifiableSortedMap(new TreeMap<>());
 
-public class PhysicsScheduler {
+	private final Map<String, SortedMap<BlockPos, BlockFellTask>> tasks;
+	private volatile boolean hasWork = false;
 
-	private List<String> worldIdList;
-	private List<Queue<PhysicsCalculationTask>> calcTaskList;
-	private List<Queue<PhysicsFellTask>> fellTaskList;
-
-
-	private static final int CALC_INDEX = 0;
-	private static final int FALL_INDEX = 1;
+	private final Logger logger;
 
 	/**
-	 * Constructs a new PhysicsScheduler object to handle physics tasks.
+	 * Constructs a PhysicsScheduler Object.
 	 */
 	public PhysicsScheduler() {
-		worldIdList = new ArrayList<>();
-
-		calcTaskList = new ArrayList<>();
-		fellTaskList = new ArrayList<>();
+		this.tasks = Collections.synchronizedMap(new HashMap<>());
+		this.logger = GravityMod.instance.getLogger();
 	}
 
 	/**
-	 * Used to add a world to the tick handler.
-	 * @param world to add
+	 * Tell's if physics at the specified location within the specified world is due.
+	 * @param worldKey of the specified world
+	 * @param position within the world
+	 * @return true if block has physics due, false otherwise
 	 */
-	public void addWorld(IWorldHandle world) {
-		String id;
-		if (worldIdList.contains(id = getWorldKey(world))) return;
+	public boolean isDue(String worldKey, BlockPos position) {
+		final boolean ret;
 
-		worldIdList.add(id);
-		calcTaskList.add(new PriorityQueue<>());
-		fellTaskList.add(new PriorityQueue<>());
-	}
-
-	/**
-	 * Used to remove the tick handler from a world.
-	 * Normally is called when a world is unloaded.
-	 * @param world to remove
-	 */
-	public void removeWorld(IWorldHandle world) {
-		String id;
-		if (worldIdList.contains(id = getWorldKey(world))) {
-			//TODO: Implement physics check serialization to store uncalculated physics.
-			int index = worldIdList.indexOf(id);
-			calcTaskList.remove(index);
-			fellTaskList.remove(index);
-			worldIdList.remove(index);
+		synchronized (tasks) {
+			ret = tasks.getOrDefault(worldKey, EMPTY_TASKS).containsKey(position);
 		}
+
+		return ret;
 	}
 
 	/**
-	 * Tells if the world is processed by the scheduler.
-	 * @param world to check
-	 * @return true if world gets processed in scheduler, false if not
+	 * Tell's if physics at the specified location within the specified world is due.
+	 * @param worldHandle of the world
+	 * @param position within the world
+	 * @return true if block has physics due, false otherwise
 	 */
-	private boolean hasWorld(IWorldHandle world) {
-		return hasWorld(getWorldKey(world));
+	public boolean isDue(IWorldHandle worldHandle, BlockPos position) {
+		return isDue(getKey(worldHandle), position);
 	}
 
 	/**
-	 * Tells if a world is processed by the scheduler based on the ID provided.
-	 * <p>ID format is <pre>name:dimID</pre></p>
-	 * @param worldKey world id to check
-	 * @return true if world is processed in here, otherwise false
+	 * Adds a new physics task at the designated position within the designated world.
+	 * @param worldHandle of the world
+	 * @param position within the world
 	 */
-	private boolean hasWorld(String worldKey) {
-		return worldIdList.contains(worldKey);
+	public void addTask(IWorldHandle worldHandle, BlockPos position) {
+		addTask(new BlockFellTask(worldHandle, position));
 	}
 
 	/**
-	 * Tells if the world has work to be processed.
-	 * <p>if the world does not exist in the scheduler, will always return false.</p>
-	 * @param world to check
-	 * @return true if work present on world, otherwise false
+	 * Adds a new physics task at the designated position within the designated world which runs only if the block state matches the designated block state.
+	 * @param worldHandle of the world
+	 * @param position within the world
+	 * @param blockState to match
 	 */
-	public boolean hasWork(IWorldHandle world) {
-		return hasWork(getWorldKey(world));
+	public void addTask(IWorldHandle worldHandle, BlockPos position, IBlockState blockState) {
+		addTask(new BlockFellTask(worldHandle, position, blockState));
 	}
 
-	/**
-	 * Tells if the world has work to be processed based on the ID provided.
-	 * <p>ID format is <pre>name:dimID</pre></p>
-	 * @param worldKey world id to check
-	 * @return true if work present, otherwise false
-	 */
-	private boolean hasWork(String worldKey) {
-		int i = worldIdList.indexOf(worldKey); // index of world
-		return hasWorld(worldKey) && (!calcTaskList.get(i).isEmpty() || !fellTaskList.get(i).isEmpty());
-	}
+	@Override
+	public void addTask(BlockFellTask task) {
+		final String worldKey = getKey(task.worldHandle);
 
-	/**
-	 * Called for a world tick to handle physics tasks for specified world.
-	 * @param world to handle physics
-	 */
-	public void handleTick(IWorldHandle world) {
-		String id;
-		if (hasWork(id = getWorldKey(world))) {
-			List<PhysicsTask> tasks = new ArrayList<>();
-
-			Queue<PhysicsCalculationTask> calcTasks = calcTaskList.get(worldIdList.indexOf(id));
-			Queue<PhysicsFellTask> fellTasks = fellTaskList.get(worldIdList.indexOf(id));
-
-			int ft = 0; // Fell Tasks
-			int ct = 0; // Calculation Tasks
-			boolean mft = fellTasks.isEmpty(); // Max Fell Tasks Met
-			boolean mct = calcTasks.isEmpty(); // Max Calculation Tasks Met
-
-			while (!mft || !mct) {
-				if (Config.maxPhysicsCalculationTasks < ct++ || calcTasks.isEmpty()) mct = true;
-				if (Config.maxPhysicsFellTasks < ft++ || fellTasks.isEmpty()) mft = true;
-
-				if (!mft) tasks.add(fellTasks.remove());
-				if (!mct) tasks.add(calcTasks.remove());
+		synchronized (tasks) {
+			if (!tasks.containsKey(worldKey)) {
+				this.logger.error("Fell task issued on an non-tracked world! The world: '" + worldKey + "' is not tracked!");
+			} else {
+				final SortedMap<BlockPos, BlockFellTask> work;
+				work = tasks.get(worldKey);
+				synchronized (work) { //TODO: Test for deadlock scenario
+					work.put(task.position, task);
+				}
+				hasWork = true;
 			}
-
-			tasks.forEach(PhysicsTask::execute);
 		}
-
-//		if (worldIdList.contains(id = getWorldKey(world)) && !(tasks = calcTaskList.get(worldIdList.indexOf(id))).isEmpty()) {
-//			int i = 0;
-//			while (calculationLimit > i++ && !tasks.isEmpty()) {
-//				PhysicsTask task = tasks.remove(0);
-//				task.execute();
-//			}
-//		}
-	}
-
-
-	/**
-	 * Schedules a task into the scheduler to be performed during tick handling.
-	 * @param task to schedule
-	 * @throws IllegalArgumentException when task is neither a PhysicsCalculationTask or PhysicsFellTask
-	 */
-	void scheduleTask(PhysicsTask task) {
-		String id;
-		if (hasWorld(id = getWorldKey(task.worldHandle)))
-			if (task instanceof PhysicsCalculationTask)
-				calcTaskList.get(worldIdList.indexOf(id)).add((PhysicsCalculationTask) task);
-			else if (task instanceof PhysicsFellTask)
-				fellTaskList.get(worldIdList.indexOf(id)).add((PhysicsFellTask) task);
-			else
-				throw new IllegalArgumentException("Invalid task supplied to PhysicsScheduler!");
 	}
 
 	/**
-	 * Creates and schedules a calculation task within the specified world, at the specified location.
-	 * @param world involved in the task
-	 * @param position within the world involving this task
-	 * @deprecated use {@link #scheduleTask(PhysicsTask)} instead
+	 * Tells whether or not the scheduler manages the specified world.
+	 * @param handle of the world
+	 * @return true if the scheduler manages the specified world, false otherwise
 	 */
-	@Deprecated
-	public void scheduleCalcTask(IWorldHandle world, BlockPos position) {
-		scheduleTask(new PhysicsCalculationTask(this, world, position));
+	public boolean hasWorld(IWorldHandle handle) {
+		return hasWorld(getKey(handle));
 	}
 
-	private static String getWorldKey(IWorldHandle world) {
-		return world.getName() + ":" + world.getDimension();
+	/**
+	 * Tells whether or not the scheduler manages the specified world.
+	 * @param worldKey of the world
+	 * @return true if the scheduler manages the specified world, false otherwise
+	 */
+	public boolean hasWorld(String worldKey) {
+		return tasks.containsKey(worldKey);
+	}
+
+	/**
+	 * Adds a world to the queue system.
+	 * @param handle of the world to add
+	 */
+	public void addWorld(IWorldHandle handle) {
+		final String worldKey = getKey(handle);
+		synchronized (tasks) {
+			tasks.putIfAbsent(worldKey, Collections.synchronizedSortedMap(new TreeMap<>()));
+		}
+	}
+
+	/**
+	 * Removes a world from the queue system.
+	 * @param handle of the world to remove
+	 */
+	public void removeWorld(IWorldHandle handle) {
+		final String worldKey = getKey(handle);
+		synchronized (tasks) {
+			if (hasWork(worldKey)) logger.info("Unfinished work in world '" + handle.getName() + "'!");
+			tasks.remove(worldKey);
+		}
+	}
+
+	@Override
+	public boolean hasTasks() {
+		return hasWork; //TODO: Check thread safety
+	}
+
+	/**
+	 * Executes queued tasks.
+	 * <p>Implementation makes use of a work limit which stops task execution after a certain point.
+	 * Subsequent calls to this method will continue executing the tasks within the queue.</p>
+	 * @param worldHandle of the world the tasks are running
+	 */
+	public void run(IWorldHandle worldHandle) {
+		if (!hasWork || !hasWork(worldHandle)) return;
+
+		final SortedMap<BlockPos, BlockFellTask> work;
+		work = tasks.getOrDefault(getKey(worldHandle), EMPTY_TASKS);
+		synchronized (work) {
+			int max = Config.maxPhysicsFellTasks;
+			if (work.size() > max) {
+				Iterator<BlockPos> it = work.keySet().iterator();
+				int i = 0;
+				while (i++ < max) {
+					if (!it.hasNext()) {
+						checkWork();
+						break; //No more work
+					}
+
+					work.get(it.next()).run(); // Run Task
+					it.remove(); //Completed Task
+				}
+			} else {
+				work.values().forEach(BlockFellTask::run);
+				work.clear();
+			}
+		}
+		checkWork();
+	}
+
+	private void checkWork() {
+		synchronized (tasks) {
+			hasWork = false;
+			tasks.forEach((key, map) -> {
+				synchronized (map) {
+					hasWork = hasWork || !map.isEmpty();
+				}
+			});
+		}
+	}
+
+	/**
+	 * Tells if there is any work to be done within the specified world.
+	 * @param worldKey of the world
+	 * @return true if work is present, false otherwise
+	 */
+	public boolean hasWork(String worldKey) {
+		return !tasks.getOrDefault(worldKey, EMPTY_TASKS).isEmpty();
+	}
+
+	/**
+	 * Tells if there is any work to be done within the specified world.
+	 * @param worldHandle of world
+	 * @return true if work is present, false otherwise
+	 */
+	public boolean hasWork(IWorldHandle worldHandle) {
+		return hasWork(getKey(worldHandle));
+	}
+
+	private String getKey(IWorldHandle handle) {
+		return handle.getName() + ":" + handle.getDimension();
 	}
 }

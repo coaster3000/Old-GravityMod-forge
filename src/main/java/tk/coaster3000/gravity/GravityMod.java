@@ -27,8 +27,9 @@ import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import org.apache.logging.log4j.Logger;
 import tk.coaster3000.gravity.command.GravityCommand;
 import tk.coaster3000.gravity.common.Config;
+import tk.coaster3000.gravity.logic.LogicController;
+import tk.coaster3000.gravity.scheduler.LogicScheduler;
 import tk.coaster3000.gravity.scheduler.PhysicsScheduler;
-
 
 
 @Mod(modid = MODID, name = MODNAME, version = MODVERSION)
@@ -45,9 +46,12 @@ public class GravityMod {
 
 	private WorldListener worldListener;
 	private BlockListener blockListener;
-	private PhysicsHandler physicsHandler;
+	private LogicController logicController;
+
+	private LogicScheduler logicScheduler;
 
 	private PhysicsScheduler physicsScheduler;
+	private PhysicsHandler physicsHandler;
 
 	/**
 	 * Retrieves the logger assigned to this mod.
@@ -65,7 +69,17 @@ public class GravityMod {
 	public void onPreInit(FMLPreInitializationEvent event) {
 		this.logger = event.getModLog();
 		Config.load(event);
+
+		logicController = new LogicController();
+
+		logicScheduler = new LogicScheduler();
+		physicsScheduler = new PhysicsScheduler();
+
+		blockListener = new BlockListener(logicScheduler);
+		worldListener = new WorldListener(physicsScheduler);
+		physicsHandler = new PhysicsHandler(physicsScheduler);
 	}
+
 
 	/**
 	 * Called on FMLInitializationEvent to start the initialization process of the mod.
@@ -74,17 +88,10 @@ public class GravityMod {
 	@Mod.EventHandler
 	public void onInit(FMLInitializationEvent event) {
 
-		physicsScheduler = new PhysicsScheduler();
-
-		worldListener = new WorldListener(physicsScheduler);
-		blockListener = new BlockListener(physicsScheduler);
-		physicsHandler = new PhysicsHandler(physicsScheduler);
-
-
 		EVENT_BUS.register(worldListener);
 		EVENT_BUS.register(blockListener);
 		EVENT_BUS.register(physicsHandler);
-
+		logicController.reload();
 
 		logger.info("Initialization Completed.");
 	}
@@ -96,5 +103,29 @@ public class GravityMod {
 	@Mod.EventHandler
 	public void onServerStart(FMLServerStartingEvent event) {
 		event.registerServerCommand(GravityCommand.instance);
+	}
+
+	/**
+	 * Retrieves the Logic Controller for this mod.
+	 * @return LogicController instance
+	 */
+	public LogicController getLogicController() {
+		return logicController;
+	}
+
+	/**
+	 * Retrieves the LogicScheduler
+	 * @return logic scheduler instance
+	 */
+	public LogicScheduler getLogicScheduler() {
+		return logicScheduler;
+	}
+
+	/**
+	 * Retrieves the physics scheduler for this mod.
+	 * @return PhysicsScheduler instance
+	 */
+	public PhysicsScheduler getPhysicsScheduler() {
+		return physicsScheduler;
 	}
 }

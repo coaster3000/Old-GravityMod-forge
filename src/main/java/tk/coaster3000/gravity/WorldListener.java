@@ -18,17 +18,14 @@ package tk.coaster3000.gravity;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import tk.coaster3000.gravity.scheduler.PhysicsScheduler;
+import tk.coaster3000.gravity.util.Util;
 
 public class WorldListener {
 
-	private PhysicsScheduler physicsScheduler;
+	private final PhysicsScheduler scheduler;
 
-	/**
-	 * Constructs a new Listener object for World load and unload events.
-	 * @param physicsScheduler scheduler to feed events into.
-	 */
-	public WorldListener(PhysicsScheduler physicsScheduler) {
-		this.physicsScheduler = physicsScheduler;
+	WorldListener(PhysicsScheduler scheduler) {
+		this.scheduler = scheduler;
 	}
 
 	/**
@@ -38,7 +35,8 @@ public class WorldListener {
 	@SubscribeEvent
 	public void onEvent(WorldEvent.Load event) {
 		if (event.getWorld().isRemote) return;
-		physicsScheduler.addWorld(new WorldHandle(event.getWorld()));
+
+		scheduler.addWorld(Util.wrapWorld(event.getWorld()));
 	}
 
 	/**
@@ -48,6 +46,7 @@ public class WorldListener {
 	@SubscribeEvent
 	public void onEvent(WorldEvent.Unload event) {
 		if (event.getWorld().isRemote) return;
-		physicsScheduler.removeWorld(new WorldHandle(event.getWorld()));
+
+		scheduler.removeWorld(Util.wrapWorld(event.getWorld()));
 	}
 }

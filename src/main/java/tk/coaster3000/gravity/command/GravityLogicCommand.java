@@ -14,14 +14,27 @@
  *    limitations under the License.
  */
 
-package tk.coaster3000.gravity.scheduler;
+package tk.coaster3000.gravity.command;
 
-public interface ValidatedTask {
-	/**
-	 * Retrieves whether the task is valid.
-	 * @return true if valid, otherwise false.
-	 */
-	default boolean isValid() {
-		return true;
+import net.minecraft.command.ICommandSender;
+import net.minecraftforge.server.command.CommandTreeBase;
+
+public class GravityLogicCommand extends CommandTreeBase {
+	static final String CMD_NAME = "logic";
+
+	public static GravityLogicCommand instance = new GravityLogicCommand();
+
+	private GravityLogicCommand() {
+		addSubcommand(GravityLogicReloadCommand.instance);
+	}
+
+	@Override
+	public String getName() {
+		return CMD_NAME;
+	}
+
+	@Override
+	public String getUsage(ICommandSender sender) {
+		return "commands.gravity.logic.usage";
 	}
 }

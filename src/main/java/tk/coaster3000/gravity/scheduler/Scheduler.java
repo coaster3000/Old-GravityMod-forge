@@ -16,12 +16,31 @@
 
 package tk.coaster3000.gravity.scheduler;
 
-public interface ValidatedTask {
+public interface Scheduler<T extends Task> {
+
 	/**
-	 * Retrieves whether the task is valid.
-	 * @return true if valid, otherwise false.
+	 * Adds a task to complete to the scheduler.
+	 * @param task to run
 	 */
-	default boolean isValid() {
-		return true;
+	 void addTask(T task);
+
+	/**
+	 * Tells whether there is any tasks that is scheduled
+	 * @return true if tasks exist, false otherwise
+	 */
+	boolean hasTasks();
+
+	/**
+	 * Tells whether the scheduler is shut down.
+	 * @return true if shutdown, false if not
+	 */
+	default boolean isShutdown() {
+		return false;
 	}
+
+	/**
+	 * Shuts down the scheduler, preventing the ability to add additional tasks to the queue.
+	 */
+	default void shutdown() { }
+
 }

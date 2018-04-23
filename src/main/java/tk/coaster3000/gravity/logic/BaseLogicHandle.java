@@ -14,14 +14,14 @@
  *    limitations under the License.
  */
 
-package tk.coaster3000.gravity.scheduler;
+package tk.coaster3000.gravity.logic;
 
-public interface ValidatedTask {
-	/**
-	 * Retrieves whether the task is valid.
-	 * @return true if valid, otherwise false.
-	 */
-	default boolean isValid() {
-		return true;
+import com.sun.istack.internal.NotNull;
+
+public abstract class BaseLogicHandle implements LogicHandle {
+
+	@Override
+	public int compareTo(@NotNull LogicHandle o) {
+		return Integer.compare(this.getPriority(), o.getPriority());
 	}
 }
