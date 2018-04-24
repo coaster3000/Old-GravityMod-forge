@@ -136,7 +136,7 @@ public class Config {
 		return changed;
 	}
 
-	/**
+	/*
 	 * Settings and values
 	 */
 

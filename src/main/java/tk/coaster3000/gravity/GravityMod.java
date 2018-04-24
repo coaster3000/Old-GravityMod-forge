@@ -114,7 +114,7 @@ public class GravityMod {
 	}
 
 	/**
-	 * Retrieves the LogicScheduler
+	 * Retrieves the LogicScheduler.
 	 * @return logic scheduler instance
 	 */
 	public LogicScheduler getLogicScheduler() {

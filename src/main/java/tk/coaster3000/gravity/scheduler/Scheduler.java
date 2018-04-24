@@ -22,10 +22,10 @@ public interface Scheduler<T extends Task> {
 	 * Adds a task to complete to the scheduler.
 	 * @param task to run
 	 */
-	 void addTask(T task);
+	void addTask(T task);
 
 	/**
-	 * Tells whether there is any tasks that is scheduled
+	 * Tells whether there is any tasks that is scheduled.
 	 * @return true if tasks exist, false otherwise
 	 */
 	boolean hasTasks();

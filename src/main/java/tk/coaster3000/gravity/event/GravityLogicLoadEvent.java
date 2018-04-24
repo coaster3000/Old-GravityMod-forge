@@ -23,7 +23,7 @@ public class GravityLogicLoadEvent extends Event {
 	LogicController controller;
 
 	/**
-	 * Construcst the GravityLogicLoadEvent
+	 * Construcst the GravityLogicLoadEvent.
 	 * @param controller Logic Controller for event
 	 */
 	public GravityLogicLoadEvent(LogicController controller) {

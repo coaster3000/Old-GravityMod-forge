@@ -27,8 +27,8 @@ import java.util.NoSuchElementException;
 import java.util.Optional;
 
 public class LogicTask extends BlockTask implements Comparable<BlockTask>, FutureValue<Optional<LogicResult>> {
-	private transient final PhysicsScheduler physicsScheduler;
-	private transient final LogicScheduler logicScheduler;
+	private final transient PhysicsScheduler physicsScheduler;
+	private final transient  LogicScheduler logicScheduler;
 	private transient LogicResult result = null;
 
 	/**

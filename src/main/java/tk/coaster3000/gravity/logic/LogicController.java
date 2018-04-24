@@ -49,8 +49,9 @@ public class LogicController {
 	 */
 	public Optional<LogicResult> runCheck(IWorldHandle worldHandle, BlockPos position) {
 
-		for (LogicHandle handle : getHandles())
+		for (LogicHandle handle : getHandles()) {
 			if (handle.canHandle(worldHandle, position)) return handle.run(worldHandle, position);
+		}
 		return Optional.empty();
 	}
 
