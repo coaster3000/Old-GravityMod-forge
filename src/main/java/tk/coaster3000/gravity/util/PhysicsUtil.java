@@ -15,6 +15,7 @@
  */
 package tk.coaster3000.gravity.util;
 
+import net.minecraft.block.BlockFalling;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.item.EntityFallingBlock;
 import net.minecraft.init.Blocks;
@@ -36,7 +37,7 @@ public class PhysicsUtil {
 	 * @return true if block is not air or bedrock and is allowed to fall, false otherwise
 	 */
 	public static boolean isBlockAllowedPhysics(IBlockState blockState) {
-		if (blockState.getBlock() == Blocks.AIR) return false; // Ever kill the world with air? Ya, let's not
+		if (blockState.getBlock() == Blocks.AIR || BlockFalling.canFallThrough(blockState)) return false; // Ever kill the world with air? Ya, let's not
 
 		String[] bla = Config.getBlockPhysicsBlacklist(); //BlackListArray
 		String[] wla = Config.getBlockPhysicsWhitelist(); //WhiteListArray
